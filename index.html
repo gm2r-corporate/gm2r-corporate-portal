@@ -334,6 +334,13 @@ body.gm2r-editor-active #recoveryOpen:not([hidden]) { display:inline-block !impo
 #tracker .gm2r-remark-chip.ok { background:#dcf5e9; color:#087449; }
 #tracker .gm2r-remark-chip.pending { background:#e9edf2; color:#61748a; }
 #tracker .gm2r-remark-chip.other { background:#eaf3f6; color:#326276; }
+#tracker .gm2r-remark-chip.dept-marketing { background:#e4f1ff; color:#135f9e; border-left:3px solid #1b72b5; }
+#tracker .gm2r-remark-chip.dept-csr { background:#e0f6f0; color:#08735f; border-left:3px solid #139178; }
+#tracker .gm2r-remark-chip.dept-creative { background:#efe9fd; color:#6242a5; border-left:3px solid #7351bb; }
+#tracker .gm2r-remark-chip.dept-warehouse { background:#e9edf2; color:#444e5a; border-left:3px solid #737b86; }
+#tracker .gm2r-remark-chip.dept-pending { background:#edf0f3; color:#657488; border-left:3px solid #9ba8b6; }
+#tracker .gm2r-remark-chip.dept-ok { background:#daf4e9; color:#0a8051; border-left:3px solid #0a8051; }
+#tracker .gm2r-remark-chip.dept-other { background:#eaf3f6; color:#326276; border-left:3px solid #326276; }
 #tracker tfoot td:last-child { min-width:315px; white-space:nowrap; }
 </style>
 </head>
@@ -510,16 +517,16 @@ function remarks(r,m,c,cr,wh){
  if(num(r,'I')>=150)arr.push('🔴 FILTERED CPP POOR');else if(num(r,'I')>=130)arr.push('🟠 FILTERED CPP HIGH');
  if(num(r,'E')<2)arr.push('📉 RAW ROAS LOW');
  if(num(r,'J')<2)arr.push('📉 FILTERED ROAS LOW');
- if(num(r,'N')<60)arr.push('📞 LOW CONFIRMATION');
+ if(num(r,'N')<60)arr.push('📞 LOW OCR');
  if(num(r,'P')>15)arr.push('❌ HIGH CANCEL');
  if(num(r,'T')>30)arr.push('🚚 HIGH RTS');
  if(!creativeOff&&num(r,'V')<30)arr.push('🎨 LOW VIDEOS');
- if(!creativeOff&&num(r,'W')<4)arr.push('🖥️ LOW LP');
+ if(!creativeOff&&num(r,'W')<4)arr.push('🖥️ LOW LDP');
  // Warehouse: do not report errors for 0 packed / 0 target (scheduled off).
  // Keep existing warehouse risk remarks for active warehouse days.
  if(!wh.includes('SCHEDULED OFF')){
-  if(wh.includes('QUOTA AT RISK'))arr.push('🔴 WAREHOUSE CRITICAL · QUOTA AT RISK');
-  else if(wh.includes('QUOTA ON TRACK'))arr.push('📦 WAREHOUSE BELOW TARGET');
+  if(wh.includes('QUOTA AT RISK'))arr.push('🔴 PACKED AT RISK');
+  else if(wh.includes('QUOTA ON TRACK'))arr.push('📦 PACKED BELOW TARGET');
  }
  return arr.length?arr.join(' + '):'✅ ALL GOOD';
 }
@@ -557,21 +564,23 @@ function remarkHTML(raw){
   '🟠 FILTERED CPP HIGH':'FILTERED CPP HIGH',
   '📉 RAW ROAS LOW':'RAW ROAS LOW',
   '📉 FILTERED ROAS LOW':'FILTERED ROAS LOW',
-  '📞 LOW CONFIRMATION':'LOW CONFIRMATION',
+  '📞 LOW OCR':'LOW OCR',
   '❌ HIGH CANCEL':'HIGH CANCEL',
   '🚚 HIGH RTS':'HIGH RTS',
   '🎨 LOW VIDEOS':'LOW VIDEOS',
-  '🖥️ LOW LP':'LOW LP',
-  '🔴 WAREHOUSE CRITICAL · QUOTA AT RISK':'WAREHOUSE AT RISK',
-  '📦 WAREHOUSE BELOW TARGET':'PACKING BELOW TARGET',
+  '🖥️ LOW LDP':'LOW LDP',
+  '🔴 PACKED AT RISK':'PACKED AT RISK',
+  '📦 PACKED BELOW TARGET':'PACKED BELOW TARGET',
   '✅ ALL GOOD':'ALL GOOD',
   '⚪ PENDING DATA':'PENDING DATA'
  };
- const kind=t=>/PENDING|INCOMPLETE|SCHEDULED OFF/i.test(t)?'pending':
+ const department=t=>/PENDING|INCOMPLETE|SCHEDULED OFF/i.test(t)?'pending':
   /ALL GOOD/i.test(t)?'ok':
-  /CRITICAL|POOR|HIGH CANCEL|HIGH RTS|QUOTA AT RISK|LOW CONFIRMATION|QUOTA NOT MET/i.test(t)?'alert':
-  /LOW|HIGH|BELOW TARGET|RISK/i.test(t)?'caution':'info';
- return `<div class="gm2r-remark-list" aria-label="${esc(raw)}" title="${esc(raw)}">${parts.map(t=>`<span class="gm2r-remark-chip ${kind(t)}" title="${esc(t)}">${esc(compact[t]||t)}</span>`).join('')}</div>`;
+  /PACKED AT RISK|PACKED BELOW TARGET|WAREHOUSE/i.test(t)?'warehouse':
+  /CREATIVE|LOW VIDEOS|LOW LDP/i.test(t)?'creative':
+  /CSR CRITICAL|LOW OCR|HIGH CANCEL|HIGH RTS/i.test(t)?'csr':
+  /MARKETING|LOW ORDERS|RAW CPP|FILTERED CPP|RAW ROAS|FILTERED ROAS/i.test(t)?'marketing':'other';
+ return `<div class="gm2r-remark-list" aria-label="${esc(raw)}" title="${esc(raw)}">${parts.map(t=>`<span class="gm2r-remark-chip dept-${department(t)}" title="${esc(t)}">${esc(compact[t]||t)}</span>`).join('')}</div>`;
 }
 
 // Band boundaries follow the user-supplied Google Sheets conditional formatting.
