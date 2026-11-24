@@ -323,19 +323,18 @@ body.gm2r-editor-active .top .actions:not([hidden]) { display:flex !important; }
 body.gm2r-editor-active #recoveryOpen:not([hidden]) { display:inline-block !important; }
 </style>
 <style>
-/* Readable Automatic Operation Remarks: display-only; formulas and text unchanged. */
-#tracker th.remarkshead { width:440px; min-width:440px !important; max-width:440px; white-space:normal; line-height:1.45; padding:12px 16px; }
-#tracker td.remarks { width:440px; min-width:440px !important; max-width:440px !important; padding:9px 12px !important; vertical-align:middle; text-align:left !important; white-space:normal !important; }
-#tracker .gm2r-remark-list { display:flex; flex-wrap:wrap; justify-content:flex-start; align-items:center; gap:5px 6px; width:100%; line-height:1.4; text-align:left; }
-#tracker .gm2r-remark-chip { display:inline-flex; align-items:center; width:max-content; max-width:100%; white-space:normal; overflow-wrap:anywhere; padding:5px 9px; border-radius:7px; font-size:10px; font-weight:800; letter-spacing:0; line-height:1.45; text-align:left; }
-#tracker .gm2r-remark-chip.alert { background:#ffeded; color:#ad3343; }
-#tracker .gm2r-remark-chip.caution { background:#fff0d9; color:#92520d; }
+/* Compact Automatic Operation Remarks: original width and row height retained. */
+#tracker th.remarkshead { width:315px; min-width:315px !important; max-width:315px; white-space:nowrap; padding:6px 7px; }
+#tracker td.remarks { width:315px; min-width:315px !important; max-width:315px !important; padding:3px 5px !important; vertical-align:middle; text-align:center !important; white-space:nowrap !important; height:37px; }
+#tracker .gm2r-remark-list { display:flex; flex-wrap:nowrap; align-items:center; justify-content:flex-start; gap:5px; max-width:100%; width:100%; height:29px; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; text-align:left; }
+#tracker .gm2r-remark-chip { display:inline-flex; align-items:center; flex:0 0 auto; white-space:nowrap; padding:4px 7px; border-radius:6px; font-size:10px; font-weight:750; letter-spacing:0; line-height:1.2; }
+#tracker .gm2r-remark-chip.alert { background:#ffeded; color:#ad3343; border-left:3px solid #cd4053; }
+#tracker .gm2r-remark-chip.caution { background:#fff0d9; color:#92520d; border-left:3px solid #d79a2d; }
 #tracker .gm2r-remark-chip.info { background:#e5f0fb; color:#285c87; }
 #tracker .gm2r-remark-chip.ok { background:#dcf5e9; color:#087449; }
 #tracker .gm2r-remark-chip.pending { background:#e9edf2; color:#61748a; }
 #tracker .gm2r-remark-chip.other { background:#eaf3f6; color:#326276; }
-#tracker tfoot td:last-child { min-width:440px; white-space:normal; line-height:1.45; }
-@media(max-width:680px) { #tracker th.remarkshead,#tracker td.remarks { width:345px; min-width:345px !important; max-width:345px !important; } #tracker tfoot td:last-child { min-width:345px; } }
+#tracker tfoot td:last-child { min-width:315px; white-space:nowrap; }
 </style>
 </head>
 <body class="gm2r-locked"><div id="gm2rCloudGate" hidden role="dialog" aria-modal="true" aria-label="GM2R editor authentication">
@@ -542,16 +541,37 @@ function getDerived(date){
 function color(s){if(s.includes('PENDING')||s.includes('SCHEDULED OFF')||s.includes('INCOMPLETE'))return 'gray';if(/🔴|POOR|CRITICAL|NOT MET|UNDERPERFORMING/.test(s))return 'red';if(/🟠|RISK|MONITORING/.test(s))return 'orange';if(/🟡|SATISFACTORY|PARTIALLY|GOOD$/.test(s)&&!s.includes('VERY GOOD')&&!s.includes('ALL GOOD'))return 'yellow';if(/🔵|VERY GOOD|HIGH PERFORMING|TRACK/.test(s))return 'blue';return 'green'}
 const pill=s=>`<span class="pill ${color(s)}">${s}</span>`;
 
-// Split only the *display* of a full remarks string into legible chips.
-// Raw remarks stay intact for calculations, filters, exports, and backups.
+// Compact visual labels only; preserve the complete original remarks for calculations,
+// exports, and tooltips. Long cells scroll horizontally WITHOUT widening the table.
 function remarkHTML(raw){
  const esc=t=>String(t).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
  const parts=String(raw??'').split(' + ').filter(Boolean);
+ const compact={
+  '🔴 MARKETING CRITICAL':'MARKETING CRITICAL',
+  '🔴 CSR CRITICAL':'CSR CRITICAL',
+  '🔴 CREATIVE CRITICAL':'CREATIVE CRITICAL',
+  '📉 LOW ORDERS':'LOW ORDERS',
+  '🔴 RAW CPP POOR':'RAW CPP POOR',
+  '🟠 RAW CPP HIGH':'RAW CPP HIGH',
+  '🔴 FILTERED CPP POOR':'FILTERED CPP POOR',
+  '🟠 FILTERED CPP HIGH':'FILTERED CPP HIGH',
+  '📉 RAW ROAS LOW':'RAW ROAS LOW',
+  '📉 FILTERED ROAS LOW':'FILTERED ROAS LOW',
+  '📞 LOW CONFIRMATION':'LOW CONFIRMATION',
+  '❌ HIGH CANCEL':'HIGH CANCEL',
+  '🚚 HIGH RTS':'HIGH RTS',
+  '🎨 LOW VIDEOS':'LOW VIDEOS',
+  '🖥️ LOW LP':'LOW LP',
+  '🔴 WAREHOUSE CRITICAL · QUOTA AT RISK':'WAREHOUSE AT RISK',
+  '📦 WAREHOUSE BELOW TARGET':'PACKING BELOW TARGET',
+  '✅ ALL GOOD':'ALL GOOD',
+  '⚪ PENDING DATA':'PENDING DATA'
+ };
  const kind=t=>/PENDING|INCOMPLETE|SCHEDULED OFF/i.test(t)?'pending':
   /ALL GOOD/i.test(t)?'ok':
   /CRITICAL|POOR|HIGH CANCEL|HIGH RTS|QUOTA AT RISK|LOW CONFIRMATION|QUOTA NOT MET/i.test(t)?'alert':
   /LOW|HIGH|BELOW TARGET|RISK/i.test(t)?'caution':'info';
- return `<div class="gm2r-remark-list" aria-label="${esc(raw)}">${parts.map(t=>`<span class="gm2r-remark-chip ${kind(t)}">${esc(t)}</span>`).join('')}</div>`;
+ return `<div class="gm2r-remark-list" aria-label="${esc(raw)}" title="${esc(raw)}">${parts.map(t=>`<span class="gm2r-remark-chip ${kind(t)}" title="${esc(t)}">${esc(compact[t]||t)}</span>`).join('')}</div>`;
 }
 
 // Band boundaries follow the user-supplied Google Sheets conditional formatting.
