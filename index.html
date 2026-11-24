@@ -297,9 +297,15 @@ body.gm2r-locked .cc-editor,body.gm2r-locked .cc-controls{display:none!important
 #gm2rCloudMigration{border:1px solid #e9c67c;background:#fff8e7;padding:15px;border-radius:12px;max-width:1050px;margin:18px auto;text-align:center}
 #gm2rCloudMigration p{line-height:1.6;margin:8px auto}
 /* Viewer pages are always displayed, even before Firebase is connected. */
+/* Viewer mode: keep all data management and recovery tools completely invisible.
+   These are interface restrictions; Firestore Security Rules protect server writes. */
+.top .actions[hidden] { display: none !important; }
+body.gm2r-locked .top .actions,
+body.gm2r-locked #recoveryOpen,
+body.gm2r-locked #gm2rRecoveryOverlay { display: none !important; }
 </style>
 </head>
-<body><div id="gm2rCloudGate" hidden role="dialog" aria-modal="true" aria-label="GM2R editor authentication">
+<body class="gm2r-locked"><div id="gm2rCloudGate" hidden role="dialog" aria-modal="true" aria-label="GM2R editor authentication">
  <section class="cloud-card"><div style="font-size:31px">🔒</div><h2>GM2R EDITOR ACCESS</h2>
  <p id="gm2rCloudMessage">Public viewers do not need to log in. Approved editors can sign in here.</p>
  <form id="gm2rEditorForm" style="display:grid;gap:12px;margin-top:16px">
@@ -808,11 +814,12 @@ show();
  const state=document.getElementById('editorStateInfo');
  let unlocked=false;
  const guarded='#tracker input[data-field],#settings input[data-setting],#requestForm input,#requestForm select,#requestForm textarea,#homeProfileForm input,#homeProfileForm textarea,#recordsBody .status-choice';
- const actions='#homeEditToggle,#homeReset,#homeImport,#csvImport,#backupImport,#clearMonth,#restoreApps,#submitRequest,#cancelEdit,#recordsBody .rec-edit,#recordsBody .rec-delete,#gm2rRecoveryRestore,#gm2rRecoveryDownload';
+ const actions='#homeEditToggle,#homeReset,#homeImport,#csvExport,#csvImport,#backupExport,#backupImport,#clearMonth,#recoveryOpen,#restoreApps,#submitRequest,#cancelEdit,#recordsBody .rec-edit,#recordsBody .rec-delete,#gm2rRecoveryRestore,#gm2rRecoveryDownload';
  function authorized(){return !!window.gm2rIsAdmin && !!window.gm2rCloudReady;}
  function render(){
    const editor=authorized()&&unlocked;
    document.body.classList.toggle('gm2r-locked',!editor);
+   if(!editor){const recovery=document.getElementById('gm2rRecoveryOverlay');if(recovery)recovery.hidden=true;}
    btn.hidden=false;btn.style.display='';
    btn.textContent=editor?'🔓 LOCK EDITING':'🔒 UNLOCK EDITING';
    state.textContent=editor?'🔓 Editor access enabled · Changes synchronize to Firebase.':authorized()?'🔒 Editing paused · Click UNLOCK EDITING.':'🔒 Viewer mode · KPI, calendar, attendance, and chart are available to read.';
