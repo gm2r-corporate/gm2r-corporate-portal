@@ -42,6 +42,25 @@ td.currency-cell input { width:calc(100% - 17px); max-width:100px; padding-left:
 .kpi .val{font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:520px){.kpis{grid-template-columns:repeat(1,minmax(0,1fr))}}
+
+/* Monthly performance: requested nine marketing KPIs in Raw / Spend / Filtered groups. */
+.kpi-groups{display:flex;flex-direction:column;gap:14px}
+.kpi-group{background:#fff;border:1px solid #dce5ef;border-left:5px solid var(--group-color);border-radius:13px;padding:14px 16px 17px;box-shadow:0 3px 14px #12314908}
+.kpi-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 13px;border-bottom:1px solid #e6edf4;padding-bottom:10px;text-align:left!important}
+.kpi-group-title{color:var(--group-color);font-weight:900;letter-spacing:.55px;font-size:13px;text-transform:uppercase;text-align:left!important}
+.kpi-group-description{font-size:11px;color:#748b9d;text-align:right!important}
+.kpi-group .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi-group .kpi{box-shadow:none;background:#f8fbfd;border:1px solid #e0e8f0;padding:14px 10px}
+.kpi-group .kpi .val{font-size:22px}
+.kpi-group.marketing{--group-color:#1b72b5}
+.kpi-group.spend{--group-color:#c48b19}
+.kpi-group.filtered{--group-color:#139178}
+.kpi-group.warehouse{--group-color:#737b86}
+.kpi-group.progress{--group-color:#c48b19}
+@media(max-width:1150px){.kpi-group .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:750px){.kpi-group .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi-group-head{flex-wrap:wrap}.kpi-group-description{text-align:left!important}}
+@media(max-width:440px){.kpi-group .kpis{grid-template-columns:1fr}}
+
 /* Automatic overall status cards */
 .overall-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
 .overall-card{border:1px solid var(--line);border-top:5px solid var(--blue);background:#fff;border-radius:13px;padding:18px 10px;text-align:center;min-width:0}
@@ -210,6 +229,51 @@ body.gm2r-locked #applicationsPage .apps-intro > div:first-child {text-align:cen
 #tracker td.computed.metric-cyan:after,#tracker td.computed.metric-green:after,
 #tracker td.computed.metric-yellow:after,#tracker td.computed.metric-orange:after,
 #tracker td.computed.metric-red:after {color:inherit;opacity:.6}
+
+/* Compact 9-metric monthly dashboard: two even rows + spend column; no oversized group panels. */
+#kpis.kpi-groups{display:block; margin:0}
+#kpis .kpi-compact-board{display:grid;grid-template-columns:minmax(0,4fr) minmax(155px,1fr);grid-template-rows:repeat(2,auto);gap:9px;max-width:100%}
+#kpis .kpi-compact-row{min-width:0;display:grid;grid-template-columns:145px minmax(0,1fr);align-items:center;gap:9px;border:1px solid #d9e6f0;border-left:4px solid var(--row-color);background:#fff;border-radius:11px;padding:9px 10px}
+#kpis .kpi-compact-row.raw{--row-color:#1b72b5;grid-column:1;grid-row:1}
+#kpis .kpi-compact-row.filtered{--row-color:#139178;grid-column:1;grid-row:2}
+#kpis .kpi-compact-heading{display:flex;align-items:center;gap:7px;font-size:10px;letter-spacing:.35px;font-weight:900;line-height:1.4;color:var(--row-color,#ac7716)}
+#kpis .kpi-compact-dot{flex:0 0 7px;width:7px;height:7px;border-radius:50%;background:var(--row-color)}
+#kpis .kpi-compact-values{min-width:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+#kpis .kpi-compact-card{min-width:0;background:#f5f9fc;border:1px solid #e4edf3;border-radius:9px;padding:10px 9px;display:flex;flex-direction:column;justify-content:center;gap:4px}
+#kpis .kpi-compact-card .name{color:#6a8194;letter-spacing:.3px;font-size:10px;text-transform:uppercase;font-weight:800}
+#kpis .kpi-compact-card .val{color:#133551;font-size:clamp(15px,1.5vw,21px);font-weight:900;line-height:1.2;overflow-wrap:anywhere}
+#kpis .kpi-compact-spend{grid-column:2;grid-row:1 / span 2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:1px solid #eedeb8;border-left:4px solid #c48b19;background:#fffbf0;border-radius:11px;padding:12px 8px;text-align:center;min-width:0}
+#kpis .kpi-compact-spend .val{font-size:clamp(16px,1.7vw,23px);font-weight:900;color:#17354f;overflow-wrap:anywhere}
+#kpis .kpi-compact-spend-note{color:#947d53;font-size:10px}
+@media(max-width:1050px){#kpis .kpi-compact-board{grid-template-columns:1fr}#kpis .kpi-compact-row{grid-template-columns:130px minmax(0,1fr)}#kpis .kpi-compact-spend{grid-column:1;grid-row:3;min-height:70px;gap:4px}}
+@media(max-width:660px){#kpis .kpi-compact-row{grid-template-columns:1fr;gap:7px}#kpis .kpi-compact-values{grid-template-columns:repeat(2,minmax(0,1fr))}#kpis .kpi-compact-card{min-height:60px}#kpis .kpi-compact-spend{min-height:70px}}
+
+
+/* Original KPI box design, organized as Raw > Ad Spend > Filtered. */
+#kpis.kpi-groups{display:flex;flex-direction:column;gap:10px;margin:0}
+#kpis .gm2r-monthly-row{min-width:0;display:flex;flex-direction:column;gap:5px}
+#kpis .gm2r-monthly-label{font-size:10px;font-weight:900;letter-spacing:1px;padding:0 2px;color:#1b72b5}
+#kpis .gm2r-monthly-label.ads{color:#a67815}
+#kpis .gm2r-monthly-label.filtered{color:#139178}
+#kpis .gm2r-monthly-boxes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#kpis .gm2r-monthly-boxes .kpi{background:#fff;border:1px solid #e0e8f0;border-radius:13px;box-shadow:0 3px 13px #12314908;min-width:0;text-align:center;padding:13px 14px;min-height:92px;display:flex;flex-direction:column;justify-content:center;align-items:center}
+#kpis .gm2r-monthly-boxes .kpi .name{font-size:10px;font-weight:750;color:#6f8398;text-transform:uppercase;letter-spacing:.5px}
+#kpis .gm2r-monthly-boxes .kpi .val{font-size:clamp(18px,1.55vw,25px);font-weight:900;margin:5px 0;color:#0f2e49;letter-spacing:-.6px;line-height:1.2;overflow-wrap:anywhere}
+#kpis .gm2r-monthly-boxes .kpi .detail{font-size:10px;color:#768da2}
+#kpis .gm2r-monthly-row.spend{gap:0;display:flex;flex-direction:row;align-items:center;gap:10px}
+#kpis .gm2r-monthly-row.spend .gm2r-monthly-label{width:150px;flex:0 0 150px}
+#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes{flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));min-width:0}
+@media(max-width:850px){#kpis .gm2r-monthly-boxes{grid-template-columns:repeat(2,minmax(0,1fr))}#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){#kpis .gm2r-monthly-boxes{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}#kpis .gm2r-monthly-row.spend{display:flex;flex-direction:column;align-items:stretch;gap:5px}#kpis .gm2r-monthly-row.spend .gm2r-monthly-label{width:auto;flex:auto}#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes{grid-template-columns:repeat(2,minmax(0,1fr))}#kpis .gm2r-monthly-boxes .kpi{padding:10px 6px;min-height:82px}}
+
+/* Keep the original 4-column tiles, but align the single Ad Spend tile at the exact center. */
+#kpis .gm2r-monthly-row.spend{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+#kpis .gm2r-monthly-row.spend .gm2r-monthly-label{width:auto;flex:0 0 auto;text-align:center}
+#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes{display:block;flex:0 0 auto;width:calc((100% - 30px)/4);min-width:0}
+#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes .kpi{width:100%}
+@media(max-width:850px){#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes{width:calc((100% - 10px)/2)}}
+@media(max-width:540px){#kpis .gm2r-monthly-row.spend{align-items:center}#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes{width:calc((100% - 7px)/2)}}
+
 </style>
 
 <style>
@@ -404,7 +468,7 @@ body.gm2r-editor-active #recoveryOpen:not([hidden]) { display:inline-block !impo
 <div class="sectiontitle">Monthly decision thresholds <span style="font-weight:500;text-transform:none;letter-spacing:0"> · editable</span></div>
 <section class="settings" id="settings"></section>
 <div class="sectiontitle">Monthly performance</div>
-<section class="kpis" id="kpis"></section>
+<section class="kpi-groups" id="kpis" aria-label="Monthly marketing performance overview"></section>
 <div class="sectiontitle">Monthly overall department ratings · automatic</div>
 <section class="overall-grid" id="overallRatings" aria-live="polite"></section>
 <div class="sectiontitle">Live performance charts</div>
@@ -700,20 +764,32 @@ function renderTotals(){
  $('totals').innerHTML=`<tr><td>MONTHLY TOTAL</td>${COLUMN.map(([k])=>{const v=k==='D'?ratio(sumVal('F'),b):k==='E'?ratio(sumVal('C'),sumVal('F')):k==='I'?ratio(sumVal('F'),sumVal('G')):k==='J'?ratio(sumVal('H'),sumVal('F')):null;return `<td class="${metricBand(k,v)}">${k==='Y'?overallOperationPill(values[k]):(values[k]??'—')}</td>`}).join('')}<td>${completed} COMPLETE · ${needs} ACTION · ${all-completed} PENDING</td></tr>`;
 }
 function renderKpis(){
-  let s=summary(),v=s.sum,n=s.countFilled,sm=k=>n[k]?v[k]:null;
-  let items=[
-    ['Raw Orders',sign(sm('B')),'Goal: '+sign(settings.goalOrders)+' / day'],
-    ['Filtered Orders',sign(sm('G')),'Fulfilled / filtered volume'],
-    ['Warehouse Packed',sign(sm('WA')),'Total packed this month'],
-    ['Warehouse Target',sign(sm('WB')),'Total target release this month'],
-    ['Raw Gross',peso(sm('C')),'Sum of daily raw gross · PHP'],
-    ['Ad Spend',peso(sm('F')),'Sum of daily ad spending · PHP'],
-    ['Filtered Gross',peso(sm('H')),'Sum of daily filtered gross · PHP'],
-    ['Raw CPP',sm('B')&&sm('F')?peso(sm('F')/sm('B')):'—','Spend ÷ raw orders'],
-    ['Filtered ROAS',sm('F')&&sm('H')?dec(sm('H')/sm('F'))+'x':'—','Filtered gross ÷ spend'],
-    ['Completion',s.completed+' / '+s.all,'Days with all required inputs']
+  const s=summary(),v=s.sum,n=s.countFilled,sm=k=>n[k]?v[k]:null;
+  const ratio=(a,b)=>a===null||b===null||b===0?null:a/b;
+  const groups=[
+   {key:'marketing',title:'RAW PERFORMANCE',desc:'Marketing · unfiltered sales performance',items:[
+     ['Raw Orders',sign(sm('B')),'Total orders received'],
+     ['Raw Gross',peso(sm('C')),'Total raw gross sales'],
+     ['Raw CPP',peso(ratio(sm('F'),sm('B'))),'Ad spend ÷ raw orders'],
+     ['Raw ROAS',ratio(sm('C'),sm('F'))===null?'—':dec(ratio(sm('C'),sm('F')))+'x','Raw gross ÷ ad spend']
+   ]},
+   {key:'spend',title:'ADVERTISING SPEND',desc:'Marketing · total investment',items:[
+     ['Ad Spend',peso(sm('F')),'Total advertising spend · PHP']
+   ]},
+   {key:'filtered',title:'FILTERED PERFORMANCE',desc:'Marketing · filtered sales performance',items:[
+     ['Filtered Orders',sign(sm('G')),'Total filtered orders'],
+     ['Filtered Gross',peso(sm('H')),'Total filtered gross sales'],
+     ['Filtered CPP',peso(ratio(sm('F'),sm('G'))),'Ad spend ÷ filtered orders'],
+     ['Filtered ROAS',ratio(sm('H'),sm('F'))===null?'—':dec(ratio(sm('H'),sm('F')))+'x','Filtered gross ÷ ad spend']
+   ]}
   ];
-  $('kpis').innerHTML=items.map(([a,b,c])=>`<div class="kpi"><div class="name">${a}</div><div class="val">${b}</div><div class="detail">${c}</div></div>`).join('')
+  // Preserve the original white KPI tiles; change only their grouping and order.
+  const card=([label,value,detail])=>`<div class="kpi" title="${detail}"><div class="name">${label}</div><div class="val">${value}</div><div class="detail">${detail}</div></div>`;
+  const raw=groups[0].items,spend=groups[1].items[0],filtered=groups[2].items;
+  $('kpis').innerHTML=`
+    <div class="gm2r-monthly-row"><div class="gm2r-monthly-label raw">RAW PERFORMANCE</div><div class="gm2r-monthly-boxes">${raw.map(card).join('')}</div></div>
+    <div class="gm2r-monthly-row spend"><div class="gm2r-monthly-label ads">ADVERTISING SPEND</div><div class="gm2r-monthly-boxes">${card(spend)}</div></div>
+    <div class="gm2r-monthly-row"><div class="gm2r-monthly-label filtered">FILTERED PERFORMANCE</div><div class="gm2r-monthly-boxes">${filtered.map(card).join('')}</div></div>`;
 }
 function plot(canvasId,series,yMax0){let c=$(canvasId),width=c.clientWidth||280,height=c.clientHeight||170,scale=window.devicePixelRatio||1;c.width=Math.round(width*scale);c.height=Math.round(height*scale);let ctx=c.getContext('2d');ctx.scale(scale,scale);const left=34,right=8,top=10,bottom=24,W=width-left-right,H=height-top-bottom;const values=series.flatMap(x=>x.values.filter(Number.isFinite));let max=Math.max(yMax0||0,...values,1);max*=1.1;ctx.font='10px system-ui';ctx.textAlign='right';ctx.fillStyle='#889aad';for(let i=0;i<=4;i++){let y=top+H*(1-i/4);ctx.strokeStyle='#e7edf3';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(left+W,y);ctx.stroke();ctx.fillText(max*i/4>=100?Math.round(max*i/4):Number((max*i/4).toFixed(1)),left-5,y+3)}let n=daysIn(month);ctx.textAlign='center';for(let x of [1,Math.ceil(n/4),Math.ceil(n/2),Math.ceil(n*3/4),n]){let xx=left+(x-1)*W/(n-1||1);ctx.fillText(x,xx,height-6)}for(let s of series){ctx.beginPath();ctx.lineWidth=s.dash?1.5:2;ctx.strokeStyle=s.color;ctx.setLineDash(s.dash?[5,4]:[]);let drawing=false;for(let i=0;i<s.values.length;i++){let val=s.values[i];if(!Number.isFinite(val)){drawing=false;continue}let x=left+i*W/(n-1||1),y=top+H*(1-val/max);drawing?ctx.lineTo(x,y):ctx.moveTo(x,y);drawing=true}ctx.stroke();ctx.setLineDash([])}}
 function renderCharts(){const all=dates(),val=k=>all.map(d=>num(getR(d),k)),line=(values,color,dash=false)=>({values,color,dash});plot('ordersChart',[line(val('B'),'#287eb9'),line(val('G'),'#eda33b'),line(all.map(()=>Number(settings.goalOrders)),'#a0afc0',true)],settings.goalOrders);plot('roasChart',[line(val('E'),'#287eb9'),line(val('J'),'#eda33b')],5);plot('serviceChart',[line(val('N'),'#287eb9'),line(val('P'),'#e1a331'),line(val('T'),'#209c77')],100);plot('creativeChart',[line(val('V'),'#287eb9'),line(val('W'),'#e1a331')],30);plot('warehouseChart',[line(val('WA'),'#66717e'),line(val('WB'),'#e1a331')],0)}
