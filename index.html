@@ -322,6 +322,21 @@ body:not(.gm2r-editor-active) #gm2rRecoveryOverlay { display:none !important; }
 body.gm2r-editor-active .top .actions:not([hidden]) { display:flex !important; }
 body.gm2r-editor-active #recoveryOpen:not([hidden]) { display:inline-block !important; }
 </style>
+<style>
+/* Readable Automatic Operation Remarks: display-only; formulas and text unchanged. */
+#tracker th.remarkshead { width:440px; min-width:440px !important; max-width:440px; white-space:normal; line-height:1.45; padding:12px 16px; }
+#tracker td.remarks { width:440px; min-width:440px !important; max-width:440px !important; padding:9px 12px !important; vertical-align:middle; text-align:left !important; white-space:normal !important; }
+#tracker .gm2r-remark-list { display:flex; flex-wrap:wrap; justify-content:flex-start; align-items:center; gap:5px 6px; width:100%; line-height:1.4; text-align:left; }
+#tracker .gm2r-remark-chip { display:inline-flex; align-items:center; width:max-content; max-width:100%; white-space:normal; overflow-wrap:anywhere; padding:5px 9px; border-radius:7px; font-size:10px; font-weight:800; letter-spacing:0; line-height:1.45; text-align:left; }
+#tracker .gm2r-remark-chip.alert { background:#ffeded; color:#ad3343; }
+#tracker .gm2r-remark-chip.caution { background:#fff0d9; color:#92520d; }
+#tracker .gm2r-remark-chip.info { background:#e5f0fb; color:#285c87; }
+#tracker .gm2r-remark-chip.ok { background:#dcf5e9; color:#087449; }
+#tracker .gm2r-remark-chip.pending { background:#e9edf2; color:#61748a; }
+#tracker .gm2r-remark-chip.other { background:#eaf3f6; color:#326276; }
+#tracker tfoot td:last-child { min-width:440px; white-space:normal; line-height:1.45; }
+@media(max-width:680px) { #tracker th.remarkshead,#tracker td.remarks { width:345px; min-width:345px !important; max-width:345px !important; } #tracker tfoot td:last-child { min-width:345px; } }
+</style>
 </head>
 <body class="gm2r-locked"><div id="gm2rCloudGate" hidden role="dialog" aria-modal="true" aria-label="GM2R editor authentication">
  <section class="cloud-card"><div style="font-size:31px">🔒</div><h2>GM2R EDITOR ACCESS</h2>
@@ -439,8 +454,8 @@ body.gm2r-editor-active #recoveryOpen:not([hidden]) { display:inline-block !impo
 (()=>{'use strict';
 const SEED_NOV={};
 const KEY='gm2r-kpi-v2', DEFAULT={goalOrders:500,maxRawCPP:99.9,minRawROAS:2,minFilteredROAS:2,videoGoal:30,lpGoal:4,maxRTS:30,minConfirmation:60,maxCancel:15,maxSpendGross:35};
-const COLUMN=[['B','Raw Orders','int'],['C','Raw Gross','money'],['D','Raw CPP','calc'],['E','Raw ROAS','calc'],['F','Ad Spend','money'],['G','Filtered Orders','int'],['H','Filtered Gross','money'],['I','Filtered CPP','calc'],['J','Filtered ROAS','calc'],['K','Marketing Rating','rank'],['L','Calls Attempted','int'],['M','Confirmed Orders','int'],['N','Confirmation %','pctcalc'],['O','Cancelled Orders','int'],['P','Cancellation %','pctcalc'],['Q','Delivery Attempted','int'],['R','Delivered Count','int'],['S','RTS Count','int'],['T','RTS %','pctcalc'],['U','CSR Rating','rank'],['V','Creative Videos','int'],['W','Landing Pages','int'],['X','Creative Rating','rank'],['WA','Daily Packed','int'],['WB','Target Release','int'],['WC','Warehouse Rating','rank'],['Y','Daily Status','status']];
-const FIELDS=COLUMN.filter(c=>!['rank','status','calc','pctcalc'].includes(c[2])).map(c=>c[0]);
+const COLUMN=[['B','Raw Orders','int'],['C','Raw Gross','money'],['D','Raw CPP','calc'],['E','Raw ROAS','calc'],['F','Ad Spend','money'],['G','Filtered Orders','int'],['H','Filtered Gross','money'],['I','Filtered CPP','calc'],['J','Filtered ROAS','calc'],['K','Marketing Rating','rank'],['L','Calls Attempted','int'],['M','Confirmed Orders','int'],['N','Confirmation %','pctcalc'],['O','Cancelled Orders','int'],['P','Cancellation %','pctcalc'],['Q','Delivery Attempted','int'],['R','Delivered Count','calcint'],['S','RTS Count','int'],['T','RTS %','pctcalc'],['U','CSR Rating','rank'],['V','Creative Videos','int'],['W','Landing Pages','int'],['X','Creative Rating','rank'],['WA','Daily Packed','int'],['WB','Target Release','int'],['WC','Warehouse Rating','rank'],['Y','Daily Status','status']];
+const FIELDS=COLUMN.filter(c=>!['rank','status','calc','pctcalc','calcint'].includes(c[2])).map(c=>c[0]);
 const SETS=[['goalOrders','Orders / Day','orders'],['maxRawCPP','Max Raw CPP','₱'],['minRawROAS','Min Raw ROAS','x'],['minFilteredROAS','Min Filtered ROAS','x'],['videoGoal','Videos / Day','videos'],['lpGoal','Landing Pages / Day','pages'],['maxRTS','Max RTS Rate','%'],['minConfirmation','Min Confirm Rate','%'],['maxCancel','Max Cancel Rate','%'],['maxSpendGross','Max Ad Spend / Gross','%']];
 let db;try{db=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{db={}}if(!db||typeof db!=='object')db={};db.months??={};db.settings??={};
 if(!db.months['2026-11']){let old;try{old=JSON.parse(localStorage.getItem('gm2r-kpi-v1')||'{}')}catch{};if(old?.months?.['2026-11']){db.months['2026-11']=old.months['2026-11'];db.settings={...old.settings,...db.settings}}}
@@ -455,9 +470,11 @@ const num=(row,k)=>{
  if(k==='J'){let h=raw('H'),f=raw('F');return h===null||f===null||h<0||f<=0?null:h/f}
  // Spreadsheet formulas: confirmation M/B, cancellation O/B, RTS S/(S+R).
  // Return percentage points (0–100) for display and existing CSR ranking thresholds.
+ // Delivered Count is computed per date from confirmed orders less RTS count.
+ if(k==='R'){let m=raw('M'),t=raw('S');return m===null||t===null?null:m-t}
  if(k==='N'){let b=raw('B'),m=raw('M');return b===null||m===null||b===0?null:100*m/b}
  if(k==='P'){let b=raw('B'),o=raw('O');return b===null||b===0?null:100*(o??0)/b}
- if(k==='T'){let r=raw('R'),t=raw('S');return r===null||r+(t??0)===0?null:100*(t??0)/(r+(t??0))}
+ if(k==='T'){let r=num(row,'R'),t=raw('S');return r===null||t===null||r+t===0?null:100*t/(r+t)}
  return raw(k);
 };
 const present=(row,keys)=>keys.every(k=>num(row,k)!==null);
@@ -524,6 +541,19 @@ function getDerived(date){
 }
 function color(s){if(s.includes('PENDING')||s.includes('SCHEDULED OFF')||s.includes('INCOMPLETE'))return 'gray';if(/🔴|POOR|CRITICAL|NOT MET|UNDERPERFORMING/.test(s))return 'red';if(/🟠|RISK|MONITORING/.test(s))return 'orange';if(/🟡|SATISFACTORY|PARTIALLY|GOOD$/.test(s)&&!s.includes('VERY GOOD')&&!s.includes('ALL GOOD'))return 'yellow';if(/🔵|VERY GOOD|HIGH PERFORMING|TRACK/.test(s))return 'blue';return 'green'}
 const pill=s=>`<span class="pill ${color(s)}">${s}</span>`;
+
+// Split only the *display* of a full remarks string into legible chips.
+// Raw remarks stay intact for calculations, filters, exports, and backups.
+function remarkHTML(raw){
+ const esc=t=>String(t).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const parts=String(raw??'').split(' + ').filter(Boolean);
+ const kind=t=>/PENDING|INCOMPLETE|SCHEDULED OFF/i.test(t)?'pending':
+  /ALL GOOD/i.test(t)?'ok':
+  /CRITICAL|POOR|HIGH CANCEL|HIGH RTS|QUOTA AT RISK|LOW CONFIRMATION|QUOTA NOT MET/i.test(t)?'alert':
+  /LOW|HIGH|BELOW TARGET|RISK/i.test(t)?'caution':'info';
+ return `<div class="gm2r-remark-list" aria-label="${esc(raw)}">${parts.map(t=>`<span class="gm2r-remark-chip ${kind(t)}">${esc(t)}</span>`).join('')}</div>`;
+}
+
 // Band boundaries follow the user-supplied Google Sheets conditional formatting.
 // Lower CPP is better; higher ROAS is better. Missing values have no color.
 function metricBand(k,value){
@@ -542,10 +572,10 @@ function formatGrossAmount(value){
  return Number.isFinite(n)?n.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2}):'';
 }
 function renderRows(){let all=dates(),visible=all.filter(datePass);$('count').textContent=`${visible.length} / ${all.length} days`;
-$('body').innerHTML=visible.map(d=>{let r=getR(d),o=getDerived(d),off=o.X.includes('SCHEDULED OFF');return `<tr data-date="${d}" class="${off?'offday':''}"><td>${dateLabel(d)}</td>${COLUMN.map(([k,n,t])=>{if(t==='rank'||t==='status')return `<td class="out" data-output="${k}">${k==='Y'?overallOperationPill(o[k]):pill(o[k])}</td>`;if(t==='calc'){let v=num(r,k);return `<td class="out computed ${metricBand(k,v)}" data-output="${k}" title="Automatically calculated">${v===null?'—':(k==='D'||k==='I'?peso(v):dec(v))}</td>`}if(t==='pctcalc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated from counts">${v===null?'—':pct(v)}</td>`}let v=r[k]??'',isPct=t==='pct',isMoney=t==='money';
+$('body').innerHTML=visible.map(d=>{let r=getR(d),o=getDerived(d),off=o.X.includes('SCHEDULED OFF');return `<tr data-date="${d}" class="${off?'offday':''}"><td>${dateLabel(d)}</td>${COLUMN.map(([k,n,t])=>{if(t==='rank'||t==='status')return `<td class="out" data-output="${k}">${k==='Y'?overallOperationPill(o[k]):pill(o[k])}</td>`;if(t==='calc'){let v=num(r,k);return `<td class="out computed ${metricBand(k,v)}" data-output="${k}" title="Automatically calculated">${v===null?'—':(k==='D'||k==='I'?peso(v):dec(v))}</td>`}if(t==='pctcalc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated from counts">${v===null?'—':pct(v)}</td>`}if(t==='calcint'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated: Confirmed Orders minus RTS Count">${v===null?'—':sign(v)}</td>`}let v=r[k]??'',isPct=t==='pct',isMoney=t==='money';
  const displayedMoney=v===''?'':formatGrossAmount(v);
- return `<td class="${isMoney?'currency-cell':''}">${isMoney?'<span class="currency-symbol">₱</span>':''}<input data-field="${k}" aria-label="${n} ${d}" ${isMoney?'class="money" inputmode="decimal" data-money="true"':'step="any"'} type="${isMoney?'text':'number'}" ${k==='O'||isMoney?'':'min="0"'} placeholder="—" value="${isMoney?displayedMoney:v}" title="${n} · ${d}${isPct?' · enter 85.8 for 85.8%':''}"/></td>`}).join('')}<td class="remarks" data-output="Z">${pill(o.Z)}</td></tr>`}).join('')||'<tr><td class="empty" colspan="29">No dates match this filter.</td></tr>';renderTotals()}
-function summary(){let datesAll=dates(),sum={};for(let k of FIELDS)sum[k]=0;let countFilled={},active=0,completed=0,needs=0;for(let d of datesAll){let r=getR(d);if(FIELDS.some(k=>num(r,k)!==null))active++;let o=getDerived(d);if(!o.Z.includes('PENDING'))completed++;if(o.Y.includes('MONITORING')||o.Y.includes('ACTION REQUIRED'))needs++;for(let k of FIELDS){let v=num(r,k);if(v!==null){sum[k]+=v;countFilled[k]=(countFilled[k]??0)+1}}}return {sum,countFilled,active,completed,needs,all:datesAll.length}}
+ return `<td class="${isMoney?'currency-cell':''}">${isMoney?'<span class="currency-symbol">₱</span>':''}<input data-field="${k}" aria-label="${n} ${d}" ${isMoney?'class="money" inputmode="decimal" data-money="true"':'step="any"'} type="${isMoney?'text':'number'}" ${k==='O'||isMoney?'':'min="0"'} placeholder="—" value="${isMoney?displayedMoney:v}" title="${n} · ${d}${isPct?' · enter 85.8 for 85.8%':''}"/></td>`}).join('')}<td class="remarks" data-output="Z">${remarkHTML(o.Z)}</td></tr>`}).join('')||'<tr><td class="empty" colspan="29">No dates match this filter.</td></tr>';renderTotals()}
+function summary(){let datesAll=dates(),sum={};for(let k of FIELDS)sum[k]=0;let countFilled={},active=0,completed=0,needs=0;for(let d of datesAll){let r=getR(d);if(FIELDS.some(k=>num(r,k)!==null))active++;let o=getDerived(d);if(!o.Z.includes('PENDING'))completed++;if(o.Y.includes('MONITORING')||o.Y.includes('ACTION REQUIRED'))needs++;for(let k of [...FIELDS,'R']){let v=num(r,k);if(v!==null){sum[k]=(sum[k]??0)+v;countFilled[k]=(countFilled[k]??0)+1}}}return {sum,countFilled,active,completed,needs,all:datesAll.length}}
 // Exact monthly overall-ranking thresholds from the supplied spreadsheet formulas.
 // Monthly ratings evaluate every calendar day, including days with missing inputs.
 function monthlyOverall(){
@@ -640,15 +670,15 @@ $('body').addEventListener('input',e=>{
  }
  if(!Object.keys(r).length)delete monthData[d];else monthData[d]=r;
  save();let o=getDerived(d),tr=inp.closest('tr');
- for(let col of ['D','E','I','J','N','P','T','K','U','X','WC','Y','Z']){
+ for(let col of ['D','E','I','J','R','N','P','T','K','U','X','WC','Y','Z']){
   let el=tr.querySelector(`[data-output="${col}"]`);if(!el)continue;
-  if(['D','E','I','J','N','P','T'].includes(col)){
-   let v=num(r,col);el.textContent=v===null?'—':['N','P','T'].includes(col)?pct(v):['D','I'].includes(col)?peso(v):dec(v);
+  if(['D','E','I','J','R','N','P','T'].includes(col)){
+   let v=num(r,col);el.textContent=v===null?'—':col==='R'?sign(v):['N','P','T'].includes(col)?pct(v):['D','I'].includes(col)?peso(v):dec(v);
    if(['D','E','I','J'].includes(col)){
     el.classList.remove('metric-cyan','metric-green','metric-yellow','metric-orange','metric-red');
     const band=metricBand(col,v);if(band)el.classList.add(band);
    }
-  }else el.innerHTML=col==='Y'?overallOperationPill(o[col]):pill(o[col]);
+  }else el.innerHTML=col==='Z'?remarkHTML(o[col]):col==='Y'?overallOperationPill(o[col]):pill(o[col]);
  }
  tr.classList.toggle('offday',o.X.includes('SCHEDULED OFF'));
  renderTotals();renderKpis();renderOverall();renderCharts();
@@ -667,11 +697,11 @@ $('body').addEventListener('change',e=>{if(e.target.dataset.field&&$('filter').v
 function csvCell(s){let txt=String(s??'');return /[",\n\r]/.test(txt)?'"'+txt.replaceAll('"','""')+'"':txt}
 function download(name,content,mime){let blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
 const HEAD=['Date',...COLUMN.map(x=>x[1]),'Automatic Remarks'];
-$('csvExport').onclick=()=>{let data=[HEAD,...dates().map(d=>{let r=getR(d),o=getDerived(d);return [d,...COLUMN.map(([k,n,t])=>t==='rank'||t==='status'?o[k]:(t==='calc'?(num(r,k)===null?'':num(r,k)):(r[k]??''))),o.Z]})];download(`GM2R_KPI_${month}.csv`,'\ufeff'+data.map(row=>row.map(csvCell).join(',')).join('\r\n'),'text/csv;charset=utf-8');toast('CSV exported')};
+$('csvExport').onclick=()=>{let data=[HEAD,...dates().map(d=>{let r=getR(d),o=getDerived(d);return [d,...COLUMN.map(([k,n,t])=>t==='rank'||t==='status'?o[k]:(['calc','pctcalc','calcint'].includes(t)?(num(r,k)===null?'':num(r,k)):(r[k]??''))),o.Z]})];download(`GM2R_KPI_${month}.csv`,'\ufeff'+data.map(row=>row.map(csvCell).join(',')).join('\r\n'),'text/csv;charset=utf-8');toast('CSV exported')};
 $('backupExport').onclick=()=>{save();download(`GM2R_KPI_FULL_BACKUP_${new Date().toISOString().slice(0,10)}.json`,JSON.stringify({app:'GM2R KPI Tracker',version:1,...db},null,2),'application/json');toast('Full backup exported')};
 let importMode='csv';$('csvImport').onclick=()=>{importMode='csv';$('fileInput').accept='.csv';$('fileInput').click()};$('backupImport').onclick=()=>{importMode='json';$('fileInput').accept='.json';$('fileInput').click()};
 function parseCSV(text){text=text.replace(/^\ufeff/,'');let rows=[],cur=[],field='',quoted=false;for(let i=0;i<text.length;i++){let c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){field+='"';i++}else quoted=!quoted}else if(c===','&&!quoted){cur.push(field);field=''}else if((c==='\n'||c==='\r')&&!quoted){if(c==='\r'&&text[i+1]==='\n')i++;cur.push(field);rows.push(cur);cur=[];field=''}else field+=c}if(field||cur.length){cur.push(field);rows.push(cur)}return rows}
-function importCSV(txt){let rows=parseCSV(txt);if(rows.length<2)throw Error('CSV contains no data rows');let keys=rows[0].map(x=>x.trim().toLowerCase()),dateIdx=keys.indexOf('date');if(dateIdx<0)throw Error('CSV must have a Date column');let map={};for(let [k,label,t] of COLUMN){if(t==='rank'||t==='status'||t==='calc')continue;let i=keys.indexOf(label.toLowerCase());if(i<0)i=keys.indexOf(k.toLowerCase());if(i>=0)map[k]=i}if(!Object.keys(map).length)throw Error('CSV headers did not match tracker input columns');let imported=0;for(let row of rows.slice(1)){let d=(row[dateIdx]||'').trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(d))continue;let mon=d.slice(0,7);db.months[mon]??={};let item=db.months[mon][d]??{};for(let [k,i] of Object.entries(map)){let txt=(row[i]||'').trim().replace(/[₱,%\s]/g,'');if(!txt)continue;let value=Number(txt);if(Number.isFinite(value)&&value>=0)item[k]=value}db.months[mon][d]=item;imported++}if(!imported)throw Error('No dates in YYYY-MM-DD format found');return imported}
+function importCSV(txt){let rows=parseCSV(txt);if(rows.length<2)throw Error('CSV contains no data rows');let keys=rows[0].map(x=>x.trim().toLowerCase()),dateIdx=keys.indexOf('date');if(dateIdx<0)throw Error('CSV must have a Date column');let map={};for(let [k,label,t] of COLUMN){if(['rank','status','calc','pctcalc','calcint'].includes(t))continue;let i=keys.indexOf(label.toLowerCase());if(i<0)i=keys.indexOf(k.toLowerCase());if(i>=0)map[k]=i}if(!Object.keys(map).length)throw Error('CSV headers did not match tracker input columns');let imported=0;for(let row of rows.slice(1)){let d=(row[dateIdx]||'').trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(d))continue;let mon=d.slice(0,7);db.months[mon]??={};let item=db.months[mon][d]??{};for(let [k,i] of Object.entries(map)){let txt=(row[i]||'').trim().replace(/[₱,%\s]/g,'');if(!txt)continue;let value=Number(txt);if(Number.isFinite(value)&&value>=0)item[k]=value}db.months[mon][d]=item;imported++}if(!imported)throw Error('No dates in YYYY-MM-DD format found');return imported}
 $('fileInput').addEventListener('change',async e=>{let f=e.target.files?.[0];if(!f)return;try{let t=await f.text();if(importMode==='json'){let obj=JSON.parse(t);if(!obj.months||!obj.settings||typeof obj.months!=='object'||!confirm('Restore the full JSON backup? This replaces all saved months in this browser.'))return;db={months:obj.months,settings:obj.settings};toast('Full backup restored')}else{let rows=parseCSV(t);if(!confirm(`Import rows from ${f.name}? Existing data for matching dates and fields will be overwritten.`))return;let n=importCSV(t);toast(`${n} date rows imported`)}save();openMonth()}catch(err){alert('Import failed: '+err.message)}finally{e.target.value=''}});
 $('clearMonth').onclick=()=>{if(confirm(`Delete ALL manual data for ${month} from this browser? Export a backup first if needed.`)){delete db.months[month];monthData={};save();refresh();toast('Month cleared')}};
 let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderCharts,150)});makeHead();openMonth();
