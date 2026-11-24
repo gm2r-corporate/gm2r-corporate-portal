@@ -349,7 +349,7 @@ body.gm2r-locked .cc-editor,body.gm2r-locked .cc-controls{display:none!important
  <section class="home-edit-area" id="homeEditor" hidden><div class="home-edit-head"><h3>Edit Mission, Vision & Core Values</h3><button type="button" class="btn" id="homeCancel">Close Editor</button></div><p class="sub">Your updates are sent to Firebase. Download a full backup regularly for safekeeping.</p><form id="homeProfileForm"><div class="home-edit-grid"><label class="home-edit-field full">Company Tagline<input name="tagline" maxlength="500" required></label><label class="home-edit-field">Our Mission<textarea name="mission" required></textarea></label><label class="home-edit-field">Our Vision<textarea name="vision" required></textarea></label><label class="home-edit-field">G — Core Value Title<input name="titleG" required></label><label class="home-edit-field">G — Description<textarea name="bodyG" required></textarea></label><label class="home-edit-field">M — Core Value Title<input name="titleM" required></label><label class="home-edit-field">M — Description<textarea name="bodyM" required></textarea></label><label class="home-edit-field">2 — Core Value Title<input name="title2" required></label><label class="home-edit-field">2 — Description<textarea name="body2" required></textarea></label><label class="home-edit-field">R — Core Value Title<input name="titleR" required></label><label class="home-edit-field">R — Description<textarea name="bodyR" required></textarea></label></div><div class="home-edit-actions"><button type="submit" class="btn primary">Save Company Profile</button><button type="button" class="btn" id="homeBackup">Export Profile JSON</button><button type="button" class="btn" id="homeImport" style="display:none">Import Profile JSON</button><button type="button" class="btn danger" id="homeReset" style="display:none">Restore Sample Text</button></div><input id="homeProfileFile" type="file" accept=".json" hidden></form><div class="home-status" id="homeStatus">This is proposed sample wording until your company finalizes it.</div></section>
  </main></section>
 
-<section id="kpiPage" class="site-page" hidden><main class="wrap"><div class="toolbar"><div><h2>Daily Performance Overview</h2><div class="sub">November 2026 prefilled from your screenshot. Edit daily inputs; CPP, ROAS, rankings, totals, and charts calculate automatically.</div></div><div class="barcontrols"><label for="month">Report month</label><input id="month" type="month" value="2026-11"/><select id="filter"><option value="all">All days</option><option value="complete">Complete data</option><option value="pending">Pending data</option><option value="alerts">Needs attention</option><option value="off">Scheduled off</option></select><input class="search" id="search" placeholder="Find date…"/></div></div>
+<section id="kpiPage" class="site-page" hidden><main class="wrap"><div class="toolbar"><div><h2>Daily Performance Overview</h2><div class="sub">November 2026 prefilled from your screenshot. Edit daily counts; Confirmation %, Cancellation %, RTS %, CPP, ROAS, rankings, totals, and charts calculate automatically.</div></div><div class="barcontrols"><label for="month">Report month</label><input id="month" type="month" value="2026-11"/><select id="filter"><option value="all">All days</option><option value="complete">Complete data</option><option value="pending">Pending data</option><option value="alerts">Needs attention</option><option value="off">Scheduled off</option></select><input class="search" id="search" placeholder="Find date…"/></div></div>
 <div class="sectiontitle">Monthly decision thresholds <span style="font-weight:500;text-transform:none;letter-spacing:0"> · editable</span></div>
 <section class="settings" id="settings"></section>
 <div class="sectiontitle">Monthly performance</div>
@@ -365,8 +365,8 @@ body.gm2r-locked .cc-editor,body.gm2r-locked .cc-controls{display:none!important
 <div class="chartcard"><h3>Warehouse · Packing vs Target</h3><div class="desc">Daily packed vs daily release target</div><canvas id="warehouseChart"></canvas><div class="legend"><span><i style="background:#66717e"></i>Daily packed</span><span><i style="background:#e1a331"></i>Target release</span></div></div>
 </section>
 <div class="sectiontitle">Department daily input tracker</div><div class="deptlegend"><span><span class="dot" style="background:#257cc0"></span> Marketing</span><span><span class="dot" style="background:#159478"></span> Customer service</span><span><span class="dot" style="background:#805bc5"></span> Creatives</span><span><span class="dot" style="background:#66717e"></span> Warehouse</span><span>· Warehouse: Packed ≥ Target = HIT QUOTA; ≥ 50% = ON TRACK; below 50% = AT RISK. Enter 0 only for actual zero.</span></div>
-<section class="panel"><div class="paneltop"><div><strong id="tableTitle">Daily Operations</strong> <span id="count"></span></div><div><span id="saveMsg">● Firebase real-time sync (online)</span></div></div><div class="scroll"><table id="tracker"><thead><tr class="groups"><th class="datehead" rowspan="2" style="min-width:105px">DATE</th><th class="marketing" colspan="10">MARKETING DEPARTMENT</th><th class="service" colspan="13">CUSTOMER SERVICE DEPARTMENT</th><th class="creative" colspan="3">CREATIVE DEPARTMENT</th><th class="warehouse" colspan="3">WAREHOUSE DEPARTMENT</th><th class="operations" colspan="1">OPERATION</th><th class="remarkshead" rowspan="2" style="min-width:315px">AUTOMATIC OPERATION REMARKS</th></tr><tr class="fields" id="fieldheaders"></tr></thead><tbody id="body"></tbody><tfoot id="totals"></tfoot></table></div><div class="foot">Confirmation, Cancellation and RTS ratings update automatically from the entered percentages and the monthly thresholds. Red flags appear in Automatic Operation Remarks immediately, even when other departments have pending data. Changes synchronize through Firebase when online. Export a JSON backup regularly. CSV imports replace populated fields for matching dates, and exports include calculated rankings and remarks.</div></section>
-<div class="note"><strong>Formula fidelity:</strong> Marketing / CSR / Creative rankings and automatic remarks follow your supplied formulas, including the Sunday/November 2, 2026 creative scheduled-off rule. The <strong>Daily Status</strong> column is an added operational summary: Action Required, Monitoring Required, Operational, or Incomplete Data. Warehouse rating uses Daily Packed ÷ Target Release: 100%+ = HIT QUOTA, 50%–99.99% = QUOTA ON TRACK, below 50% = QUOTA AT RISK; a zero or missing target is pending. Warehouse status affects daily operations and automatic remarks. Warehouse monthly overall rating is based on completed warehouse days. Other monthly overall department ratings retain your supplied formulas. Monthly thresholds above are reference targets; your exact department ranking formulas retain their fixed thresholds.</div>
+<section class="panel"><div class="paneltop"><div><strong id="tableTitle">Daily Operations</strong> <span id="count"></span></div><div><span id="saveMsg">● Firebase real-time sync (online)</span></div></div><div class="scroll"><table id="tracker"><thead><tr class="groups"><th class="datehead" rowspan="2" style="min-width:105px">DATE</th><th class="marketing" colspan="10">MARKETING DEPARTMENT</th><th class="service" colspan="10">CUSTOMER SERVICE DEPARTMENT</th><th class="creative" colspan="3">CREATIVE DEPARTMENT</th><th class="warehouse" colspan="3">WAREHOUSE DEPARTMENT</th><th class="operations" colspan="1">OPERATION</th><th class="remarkshead" rowspan="2" style="min-width:315px">AUTOMATIC OPERATION REMARKS</th></tr><tr class="fields" id="fieldheaders"></tr></thead><tbody id="body"></tbody><tfoot id="totals"></tfoot></table></div><div class="foot">Confirmation, Cancellation and RTS ratings update automatically from the entered percentages and the monthly thresholds. Red flags appear in Automatic Operation Remarks immediately, even when other departments have pending data. Changes synchronize through Firebase when online. Export a JSON backup regularly. CSV imports replace populated fields for matching dates, and exports include calculated rankings and remarks.</div></section>
+<div class="note"><strong>Formula fidelity:</strong> Marketing / CSR / Creative rankings and automatic remarks follow your supplied formulas, including the Sunday/November 2, 2026 creative scheduled-off rule. CSR percentages use Confirmed/Raw Orders, Cancelled/Raw Orders and RTS/(RTS+Delivered). A warehouse day with 0 packed and 0 target is Scheduled Off. The <strong>Daily Status</strong> column is an added operational summary: Action Required, Monitoring Required, Operational, or Incomplete Data. Warehouse rating uses Daily Packed ÷ Target Release: 100%+ = HIT QUOTA, 50%–99.99% = QUOTA ON TRACK, below 50% = QUOTA AT RISK; a zero or missing target is pending. Warehouse status affects daily operations and automatic remarks. Warehouse monthly overall rating is based on completed warehouse days. Other monthly overall department ratings retain your supplied formulas. Monthly thresholds above are reference targets; your exact department ranking formulas retain their fixed thresholds.</div>
 </main></section>
 <section id="applicationsPage" class="site-page" hidden>
  <main class="wrap apps-wrap">
@@ -415,15 +415,28 @@ body.gm2r-locked .cc-editor,body.gm2r-locked .cc-controls{display:none!important
 (()=>{'use strict';
 const SEED_NOV={};
 const KEY='gm2r-kpi-v2', DEFAULT={goalOrders:500,maxRawCPP:99.9,minRawROAS:2,minFilteredROAS:2,videoGoal:30,lpGoal:4,maxRTS:30,minConfirmation:60,maxCancel:15,maxSpendGross:35};
-const COLUMN=[['B','Raw Orders','int'],['C','Raw Gross','money'],['D','Raw CPP','calc'],['E','Raw ROAS','calc'],['F','Ad Spend','money'],['G','Filtered Orders','int'],['H','Filtered Gross','money'],['I','Filtered CPP','calc'],['J','Filtered ROAS','calc'],['K','Marketing Rating','rank'],['L','Calls Attempted','int'],['M','Confirmed Orders','int'],['N','Confirmation %','pct'],['CN','Confirmation Rating','rank'],['O','Cancelled Orders','int'],['P','Cancellation %','pct'],['CP','Cancellation Rating','rank'],['Q','Delivery Attempted','int'],['R','Delivered Count','int'],['S','RTS Count','int'],['T','RTS %','pct'],['CT','RTS Rating','rank'],['U','CSR Rating','rank'],['V','Creative Videos','int'],['W','Landing Pages','int'],['X','Creative Rating','rank'],['WA','Daily Packed','int'],['WB','Target Release','int'],['WC','Warehouse Rating','rank'],['Y','Daily Status','status']];
-const FIELDS=COLUMN.filter(c=>!['rank','status','calc'].includes(c[2])).map(c=>c[0]);
+const COLUMN=[['B','Raw Orders','int'],['C','Raw Gross','money'],['D','Raw CPP','calc'],['E','Raw ROAS','calc'],['F','Ad Spend','money'],['G','Filtered Orders','int'],['H','Filtered Gross','money'],['I','Filtered CPP','calc'],['J','Filtered ROAS','calc'],['K','Marketing Rating','rank'],['L','Calls Attempted','int'],['M','Confirmed Orders','int'],['N','Confirmation %','pctcalc'],['O','Cancelled Orders','int'],['P','Cancellation %','pctcalc'],['Q','Delivery Attempted','int'],['R','Delivered Count','int'],['S','RTS Count','int'],['T','RTS %','pctcalc'],['U','CSR Rating','rank'],['V','Creative Videos','int'],['W','Landing Pages','int'],['X','Creative Rating','rank'],['WA','Daily Packed','int'],['WB','Target Release','int'],['WC','Warehouse Rating','rank'],['Y','Daily Status','status']];
+const FIELDS=COLUMN.filter(c=>!['rank','status','calc','pctcalc'].includes(c[2])).map(c=>c[0]);
 const SETS=[['goalOrders','Orders / Day','orders'],['maxRawCPP','Max Raw CPP','₱'],['minRawROAS','Min Raw ROAS','x'],['minFilteredROAS','Min Filtered ROAS','x'],['videoGoal','Videos / Day','videos'],['lpGoal','Landing Pages / Day','pages'],['maxRTS','Max RTS Rate','%'],['minConfirmation','Min Confirm Rate','%'],['maxCancel','Max Cancel Rate','%'],['maxSpendGross','Max Ad Spend / Gross','%']];
 let db;try{db=JSON.parse(localStorage.getItem(KEY)||'{}')}catch{db={}}if(!db||typeof db!=='object')db={};db.months??={};db.settings??={};
 if(!db.months['2026-11']){let old;try{old=JSON.parse(localStorage.getItem('gm2r-kpi-v1')||'{}')}catch{};if(old?.months?.['2026-11']){db.months['2026-11']=old.months['2026-11'];db.settings={...old.settings,...db.settings}}}
 if(!db.months['2026-11']||Object.keys(db.months['2026-11']).length===0){db.months['2026-11']=structuredClone(SEED_NOV)}
 let month=document.getElementById('month').value, monthData={}, settings={};const $=id=>document.getElementById(id);
 const safe=v=>v===null||v===undefined||v===''?null:(Number.isFinite(Number(v))?Number(v):null);
-const num=(row,k)=>{let raw=kk=>safe(row?.[kk]);if(k==='D'){let b=raw('B'),f=raw('F');return b===null||f===null||b<=0||f<0?null:f/b}if(k==='E'){let c=raw('C'),f=raw('F');return c===null||f===null||f===0?null:c/f}if(k==='I'){let g=raw('G'),f=raw('F');return g===null||f===null||g<=0||f<0?null:f/g}if(k==='J'){let h=raw('H'),f=raw('F');return h===null||f===null||h<0||f<=0?null:h/f}return raw(k)}; const present=(row,keys)=>keys.every(k=>num(row,k)!==null);
+const num=(row,k)=>{
+ const raw=kk=>safe(row?.[kk]);
+ if(k==='D'){let b=raw('B'),f=raw('F');return b===null||f===null||b<=0||f<0?null:f/b}
+ if(k==='E'){let c=raw('C'),f=raw('F');return c===null||f===null||f===0?null:c/f}
+ if(k==='I'){let g=raw('G'),f=raw('F');return g===null||f===null||g<=0||f<0?null:f/g}
+ if(k==='J'){let h=raw('H'),f=raw('F');return h===null||f===null||h<0||f<=0?null:h/f}
+ // Spreadsheet formulas: confirmation M/B, cancellation O/B, RTS S/(S+R).
+ // Return percentage points (0–100) for display and existing CSR ranking thresholds.
+ if(k==='N'){let b=raw('B'),m=raw('M');return b===null||m===null||b===0?null:100*m/b}
+ if(k==='P'){let b=raw('B'),o=raw('O');return b===null||b===0?null:100*(o??0)/b}
+ if(k==='T'){let r=raw('R'),t=raw('S');return r===null||r+(t??0)===0?null:100*(t??0)/(r+(t??0))}
+ return raw(k);
+};
+const present=(row,keys)=>keys.every(k=>num(row,k)!==null);
 const sign=(v)=>v===null?'—':v.toLocaleString('en-PH',{maximumFractionDigits:0});
 const peso=v=>v===null?'—':'₱'+v.toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});
 const dec=(v,n=2)=>v===null?'—':v.toLocaleString('en-PH',{minimumFractionDigits:n,maximumFractionDigits:n});
@@ -440,58 +453,50 @@ if(orders>=500&&rawCPP<100&&netCPP<100&&rawROAS>=4&&netROAS>=4&&retention>=.8)re
 if(orders>=450&&rawCPP<130&&netCPP<120&&rawROAS>=3&&netROAS>=3&&retention>=.8)return '🔵 HIGH PERFORMING';
 if(orders>=300&&rawCPP<130&&netCPP<130&&rawROAS>=2.1&&netROAS>=2.1)return '🟡 SATISFACTORY';return '🟠 NEEDS IMPROVEMENT'}
 function csrRank(r){if(!present(r,['N','P','T']))return '⚪ PENDING DATA';let n=num(r,'N')/100,p=num(r,'P')/100,t=num(r,'T')/100;let score=40*Math.min(1,n/.6)+35*Math.max(0,1-Math.max(0,p-.1)/.2)+25*Math.max(0,1-Math.max(0,t-.3)/.3);return score>=95?'🟢 EXCELLENT':score>=85?'🔵 VERY GOOD':score>=70?'🟡 GOOD':score>=50?'🟠 NEEDS IMPROVEMENT':'🔴 POOR'}
-// Individual CSR automatic ratings use the existing editable monthly thresholds.
-// High confirmation is GOOD; high cancellation and high RTS are BAD.
-function csrMetricRating(r,metric){
- const key={confirmation:'N',cancellation:'P',rts:'T'}[metric];
- const value=num(r,key);
- if(value===null)return '⚪ PENDING DATA';
- if(metric==='confirmation')return value>=settings.minConfirmation?'🟢 GOOD · HIGH CONFIRMATION':'🔴 LOW CONFIRMATION';
- if(metric==='cancellation')return value<=settings.maxCancel?'🟢 GOOD · LOW CANCELLATION':'🔴 HIGH CANCELLATION';
- return value<=settings.maxRTS?'🟢 GOOD · LOW RTS':'🔴 HIGH RTS';
-}
 function creativeRank(date,r){if(!present(r,['V','W']))return '⚪ PENDING DATA';let day=new Date(date+'T12:00:00').getDay();if((day===0||date==='2026-11-02')&&num(r,'V')===0&&num(r,'W')===0)return '⚪ SCHEDULED OFF';let score=(Math.min(num(r,'V')/30,1)+Math.min(num(r,'W')/4,1))/2;return score>=1?'🟢 ALL QUOTAS ACHIEVED':score>=.9?'🔵 QUOTA ON TRACK':score>=.75?'🟡 PARTIALLY ACHIEVED':score>=.5?'🟠 QUOTA AT RISK':'🔴 QUOTA NOT MET'}
-function warehouseRank(r){if(!present(r,['WA','WB'])||num(r,'WB')<=0)return '⚪ PENDING DATA';let q=num(r,'WA')/num(r,'WB');return q>=1?'🟢 HIT QUOTA':q>=.5?'🔵 QUOTA ON TRACK':'🟠 QUOTA AT RISK'}
+function warehouseRank(r){if(num(r,'WA')===0&&num(r,'WB')===0)return '⚪ SCHEDULED OFF';if(!present(r,['WA','WB'])||num(r,'WB')<=0)return '⚪ PENDING DATA';let q=num(r,'WA')/num(r,'WB');return q>=1?'🟢 HIT QUOTA':q>=.5?'🔵 QUOTA ON TRACK':'🟠 QUOTA AT RISK'}
 function remarks(r,m,c,cr,wh){
- let arr=[];
- const conf=csrMetricRating(r,'confirmation'),cancel=csrMetricRating(r,'cancellation'),rts=csrMetricRating(r,'rts');
- const incomplete=[m,c,cr].some(x=>x.includes('PENDING'))||[conf,cancel,rts].some(x=>x.includes('PENDING'));
- // Show available CSR warnings immediately, even while other departments are pending.
+ // Match spreadsheet's pending rule: all 8 primary input/calculated cells must exist.
+ const required=['B','D','E','I','J','N','P','T'];
+ const creativeOff=cr.includes('SCHEDULED OFF');
+ if(!present(r,required)||m.includes('PENDING')||c.includes('PENDING')||
+   (!creativeOff&&(!present(r,['V','W'])||cr.includes('PENDING'))))return '⚪ PENDING DATA';
+ const arr=[];
  if(m.includes('UNDERPERFORMING'))arr.push('🔴 MARKETING CRITICAL');
  if(c.includes('POOR'))arr.push('🔴 CSR CRITICAL');
- if(!cr.includes('SCHEDULED OFF')&&cr.includes('QUOTA NOT MET'))arr.push('🔴 CREATIVE CRITICAL');
- if(wh.includes('QUOTA AT RISK'))arr.push('🔴 WAREHOUSE CRITICAL · QUOTA AT RISK');
- else if(wh.includes('QUOTA ON TRACK'))arr.push('📦 WAREHOUSE BELOW TARGET');
- if(num(r,'B')!==null&&num(r,'B')<500)arr.push('📉 LOW ORDERS');
- if(num(r,'D')!==null&&num(r,'D')>=150)arr.push('🔴 RAW CPP POOR');
- else if(num(r,'D')!==null&&num(r,'D')>=130)arr.push('🟠 RAW CPP HIGH');
- if(num(r,'I')!==null&&num(r,'I')>=150)arr.push('🔴 FILTERED CPP POOR');
- else if(num(r,'I')!==null&&num(r,'I')>=130)arr.push('🟠 FILTERED CPP HIGH');
- if(num(r,'E')!==null&&num(r,'E')<2)arr.push('📉 RAW ROAS LOW');
- if(num(r,'J')!==null&&num(r,'J')<2)arr.push('📉 FILTERED ROAS LOW');
- if(conf.startsWith('🔴'))arr.push('📞 LOW CONFIRMATION ('+pct(num(r,'N'))+')');
- if(cancel.startsWith('🔴'))arr.push('❌ HIGH CANCELLATION ('+pct(num(r,'P'))+')');
- if(rts.startsWith('🔴'))arr.push('🚚 HIGH RTS ('+pct(num(r,'T'))+')');
- if(num(r,'V')!==null&&!cr.includes('SCHEDULED OFF')&&num(r,'V')<30)arr.push('🎨 LOW VIDEOS');
- if(num(r,'W')!==null&&!cr.includes('SCHEDULED OFF')&&num(r,'W')<4)arr.push('🖥️ LOW LP');
- if(incomplete||wh.includes('PENDING'))arr.push('⚪ PENDING DATA');
+ if(!creativeOff&&cr.includes('QUOTA NOT MET'))arr.push('🔴 CREATIVE CRITICAL');
+ if(num(r,'B')<500)arr.push('📉 LOW ORDERS');
+ if(num(r,'D')>=150)arr.push('🔴 RAW CPP POOR');else if(num(r,'D')>=130)arr.push('🟠 RAW CPP HIGH');
+ if(num(r,'I')>=150)arr.push('🔴 FILTERED CPP POOR');else if(num(r,'I')>=130)arr.push('🟠 FILTERED CPP HIGH');
+ if(num(r,'E')<2)arr.push('📉 RAW ROAS LOW');
+ if(num(r,'J')<2)arr.push('📉 FILTERED ROAS LOW');
+ if(num(r,'N')<60)arr.push('📞 LOW CONFIRMATION');
+ if(num(r,'P')>15)arr.push('❌ HIGH CANCEL');
+ if(num(r,'T')>30)arr.push('🚚 HIGH RTS');
+ if(!creativeOff&&num(r,'V')<30)arr.push('🎨 LOW VIDEOS');
+ if(!creativeOff&&num(r,'W')<4)arr.push('🖥️ LOW LP');
+ // Warehouse: do not report errors for 0 packed / 0 target (scheduled off).
+ // Keep existing warehouse risk remarks for active warehouse days.
+ if(!wh.includes('SCHEDULED OFF')){
+  if(wh.includes('QUOTA AT RISK'))arr.push('🔴 WAREHOUSE CRITICAL · QUOTA AT RISK');
+  else if(wh.includes('QUOTA ON TRACK'))arr.push('📦 WAREHOUSE BELOW TARGET');
+ }
  return arr.length?arr.join(' + '):'✅ ALL GOOD';
 }
 function getDerived(date){
- let r=getR(date),m=markRank(r),c=csrRank(r),cr=creativeRank(date,r),wh=warehouseRank(r);
- let note=remarks(r,m,c,cr,wh);
- const warning=/🔴|HIGH CANCELLATION|HIGH RTS|LOW CONFIRMATION|CRITICAL/.test(note);
- let daily=warning?'🔴 ACTION REQUIRED':note.includes('PENDING')?'⚪ INCOMPLETE DATA':note==='✅ ALL GOOD'?'🟢 OPERATIONAL':'🟠 MONITORING REQUIRED';
- return {K:m,CN:csrMetricRating(r,'confirmation'),CP:csrMetricRating(r,'cancellation'),CT:csrMetricRating(r,'rts'),U:c,X:cr,WC:wh,Y:daily,Z:note};
+ const r=getR(date),m=markRank(r),c=csrRank(r),cr=creativeRank(date,r),wh=warehouseRank(r);
+ const note=remarks(r,m,c,cr,wh);
+ const daily=note.includes('PENDING')?'⚪ INCOMPLETE DATA':note.includes('CRITICAL')?'🔴 ACTION REQUIRED':note==='✅ ALL GOOD'?'🟢 OPERATIONAL':'🟠 MONITORING REQUIRED';
+ return {K:m,U:c,X:cr,WC:wh,Y:daily,Z:note};
 }
 function color(s){if(s.includes('PENDING')||s.includes('SCHEDULED OFF')||s.includes('INCOMPLETE'))return 'gray';if(/🔴|POOR|CRITICAL|NOT MET|UNDERPERFORMING/.test(s))return 'red';if(/🟠|RISK|MONITORING/.test(s))return 'orange';if(/🟡|SATISFACTORY|PARTIALLY|GOOD$/.test(s)&&!s.includes('VERY GOOD')&&!s.includes('ALL GOOD'))return 'yellow';if(/🔵|VERY GOOD|HIGH PERFORMING|TRACK/.test(s))return 'blue';return 'green'}
 const pill=s=>`<span class="pill ${color(s)}">${s}</span>`;
 function dateLabel(d){return new Date(d+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',weekday:'short'})}
-function makeHead(){$('fieldheaders').innerHTML=COLUMN.map(([k,title])=>`<th class="${['WA','WB','WC'].includes(k)?'warehouse':k==='Y'?'operations':['CN','CP','CT'].includes(k)?'service':k<='K'?'marketing':k<='U'?'service':'creative'}" style="min-width:${['K','U','X','WC','Y','CN','CP','CT'].includes(k)?148: ['C','F','H'].includes(k)?102:85}px">${title}</th>`).join('')}
+function makeHead(){$('fieldheaders').innerHTML=COLUMN.map(([k,title])=>`<th class="${['WA','WB','WC'].includes(k)?'warehouse':k==='Y'?'operations':k<='K'?'marketing':k<='U'?'service':'creative'}" style="min-width:${['K','U','X','WC','Y','CN','CP','CT'].includes(k)?148: ['C','F','H'].includes(k)?102:85}px">${title}</th>`).join('')}
 function renderSettings(){$('settings').innerHTML=SETS.map(([k,n,u])=>`<div class="setting"><label for="set-${k}">${n}</label><input id="set-${k}" type="number" step="any" value="${settings[k]}" data-setting="${k}"/><small>${u}</small></div>`).join('')}
 function datePass(d){let f=$('filter').value,q=$('search').value.trim().toLowerCase(),dv=getDerived(d);if(q&&!dateLabel(d).toLowerCase().includes(q)&&!d.includes(q))return false;return f==='all'||(f==='pending'&&dv.Z.includes('PENDING'))||(f==='complete'&&!dv.Z.includes('PENDING'))||(f==='alerts'&&dv.Y.includes('ACTION REQUIRED')||f==='alerts'&&dv.Y.includes('MONITORING'))||(f==='off'&&dv.X.includes('SCHEDULED OFF'))}
 function renderRows(){let all=dates(),visible=all.filter(datePass);$('count').textContent=`${visible.length} / ${all.length} days`;
-$('body').innerHTML=visible.map(d=>{let r=getR(d),o=getDerived(d),off=o.X.includes('SCHEDULED OFF');return `<tr data-date="${d}" class="${off?'offday':''}"><td>${dateLabel(d)}</td>${COLUMN.map(([k,n,t])=>{if(t==='rank'||t==='status')return `<td class="out" data-output="${k}">${pill(o[k])}</td>`;if(t==='calc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated">${v===null?'—':(k==='D'||k==='I'?peso(v):dec(v))}</td>`}let v=r[k]??'',isPct=t==='pct';return `<td class="${t==='money'?'currency-cell':''}">${t==='money'?'<span class="currency-symbol">₱</span>':''}<input data-field="${k}" aria-label="${n} ${d}" ${['C','F','H'].includes(k)?'class="money"':''} type="number" step="any" ${k==='O'?'':'min="0"'} placeholder="—" value="${v}" title="${n} · ${d}${isPct?' · enter 85.8 for 85.8%':''}"/></td>`}).join('')}<td class="remarks" data-output="Z">${pill(o.Z)}</td></tr>`}).join('')||'<tr><td class="empty" colspan="32">No dates match this filter.</td></tr>';renderTotals()}
+$('body').innerHTML=visible.map(d=>{let r=getR(d),o=getDerived(d),off=o.X.includes('SCHEDULED OFF');return `<tr data-date="${d}" class="${off?'offday':''}"><td>${dateLabel(d)}</td>${COLUMN.map(([k,n,t])=>{if(t==='rank'||t==='status')return `<td class="out" data-output="${k}">${pill(o[k])}</td>`;if(t==='calc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated">${v===null?'—':(k==='D'||k==='I'?peso(v):dec(v))}</td>`}if(t==='pctcalc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated from counts">${v===null?'—':pct(v)}</td>`}let v=r[k]??'',isPct=t==='pct';return `<td class="${t==='money'?'currency-cell':''}">${t==='money'?'<span class="currency-symbol">₱</span>':''}<input data-field="${k}" aria-label="${n} ${d}" ${['C','F','H'].includes(k)?'class="money"':''} type="number" step="any" ${k==='O'?'':'min="0"'} placeholder="—" value="${v}" title="${n} · ${d}${isPct?' · enter 85.8 for 85.8%':''}"/></td>`}).join('')}<td class="remarks" data-output="Z">${pill(o.Z)}</td></tr>`}).join('')||'<tr><td class="empty" colspan="29">No dates match this filter.</td></tr>';renderTotals()}
 function summary(){let datesAll=dates(),sum={};for(let k of FIELDS)sum[k]=0;let countFilled={},active=0,completed=0,needs=0;for(let d of datesAll){let r=getR(d);if(FIELDS.some(k=>num(r,k)!==null))active++;let o=getDerived(d);if(!o.Z.includes('PENDING'))completed++;if(o.Y.includes('MONITORING')||o.Y.includes('ACTION REQUIRED'))needs++;for(let k of FIELDS){let v=num(r,k);if(v!==null){sum[k]+=v;countFilled[k]=(countFilled[k]??0)+1}}}return {sum,countFilled,active,completed,needs,all:datesAll.length}}
 // Exact monthly overall-ranking thresholds from the supplied spreadsheet formulas.
 // Monthly ratings evaluate every calendar day, including days with missing inputs.
@@ -516,23 +521,33 @@ function monthlyOverall(){
     crPending>0?'🟠 IN PROGRESS':
     crCounts[0]===crTotal?'🟢 ALL QUOTAS ACHIEVED':
     success/crTotal>=.9?'🔵 QUOTA ON TRACK':success/crTotal>=.75?'🟡 PARTIALLY ACHIEVED':success/crTotal>=.5?'🟠 QUOTA AT RISK':'🔴 QUOTA NOT MET';
-  const wh=ranks('WC'),whHit=count(wh,'HIT QUOTA'),whTrack=count(wh,'QUOTA ON TRACK'),whRisk=count(wh,'QUOTA AT RISK'),whPending=count(wh,'PENDING DATA'),whCompleted=whHit+whTrack+whRisk;
-  const WC=whCompleted===0?'⚪ PENDING DATA':whPending>0?'🟠 IN PROGRESS':whHit===whCompleted?'🟢 HIT QUOTA':(whHit+whTrack)/whCompleted>=.5?'🔵 QUOTA ON TRACK':'🟠 QUOTA AT RISK';
+  const wh=ranks('WC'),whHit=count(wh,'HIT QUOTA'),whTrack=count(wh,'QUOTA ON TRACK'),whRisk=count(wh,'QUOTA AT RISK'),whPending=count(wh,'PENDING DATA'),whOff=count(wh,'SCHEDULED OFF'),whCompleted=whHit+whTrack+whRisk;
+  const WC=whCompleted===0?(whPending>0?'⚪ PENDING DATA':'⚪ SCHEDULED OFF'):whPending>0?'🟠 IN PROGRESS':whHit===whCompleted?'🟢 HIT QUOTA':(whHit+whTrack)/whCompleted>=.5?'🔵 QUOTA ON TRACK':'🟠 QUOTA AT RISK';
   const operations=ranks('Y'),operational=count(operations,'OPERATIONAL'),monitoring=count(operations,'MONITORING REQUIRED'),critical=count(operations,'ACTION REQUIRED');
   const opCompleted=operational+monitoring+critical;
   const score=opCompleted?(operational+monitoring*.75)/opCompleted:0,criticalRate=opCompleted?critical/opCompleted:0;
   const Y=opCompleted===0?'⚪ PENDING DATA':score>=.9&&critical===0?'🟢 OPERATIONAL':score>=.75&&criticalRate<.1?'🔵 STABLE OPERATIONS':score>=.6&&criticalRate<.2?'🟡 MONITORING REQUIRED':score>=.4&&criticalRate<.3?'🟠 NEEDS IMPROVEMENT':'🔴 ACTION REQUIRED';
-  return {K,U,X,WC,Y,meta:{WC:`${whCompleted} rated · ${whHit} hit quota · ${whPending} pending`,K:`${mCompleted} rated days · average ${average.toFixed(2)} / 5`,U:`${csr.length-cPending} rated · ${cPending} pending`,X:`${crTotal} rated · ${crOff} scheduled off · ${crPending} pending`,Y:`${opCompleted} complete days · ${critical} action required`}};
+  return {K,U,X,WC,Y,meta:{WC:`${whCompleted} rated · ${whHit} hit quota · ${whOff} scheduled off · ${whPending} pending`,K:`${mCompleted} rated days · average ${average.toFixed(2)} / 5`,U:`${csr.length-cPending} rated · ${cPending} pending`,X:`${crTotal} rated · ${crOff} scheduled off · ${crPending} pending`,Y:`${opCompleted} complete days · ${critical} action required`}};
 }
 function renderOverall(){
   const o=monthlyOverall();
   const cards=[['K','Marketing Overall Rating'],['U','CSR Overall Rating'],['X','Creative Overall Rating'],['WC','Warehouse Overall Rating'],['Y','Operation Status Overall']];
   $('overallRatings').innerHTML=cards.map(([key,title])=>`<div class="overall-card"><div class="label">${title}</div><div class="overall-value">${pill(o[key])}</div><div class="info">${o.meta[key]}</div></div>`).join('');
 }
-function renderTotals(){let {sum,countFilled,completed,needs,all}=summary(),sumVal=k=>countFilled[k]?sum[k]:null,ratio=(a,b)=>b&&a!==null?a/b:null;
-let rateRating=(k,metric)=>{let d=dates().map(date=>num(getR(date),k)).filter(v=>v!==null);if(!d.length)return '⚪ PENDING DATA';return csrMetricRating({[k]:d.reduce((a,b)=>a+b,0)/d.length},metric)};
-let values={B:sign(sumVal('B')),C:peso(sumVal('C')),D:peso(ratio(sumVal('F'),sumVal('B'))),E:dec(ratio(sumVal('C'),sumVal('F'))),F:peso(sumVal('F')),G:sign(sumVal('G')),H:peso(sumVal('H')),I:peso(ratio(sumVal('F'),sumVal('G'))),J:dec(ratio(sumVal('H'),sumVal('F'))),K:monthlyOverall().K,L:sign(sumVal('L')),M:sign(sumVal('M')),N:pct(ratio(sumVal('M'),sumVal('L'))===null?null:100*ratio(sumVal('M'),sumVal('L'))),CN:rateRating('N','confirmation'),O:sign(sumVal('O')),P:pct(ratio(sumVal('O'),sumVal('M'))===null?null:100*ratio(sumVal('O'),sumVal('M'))),CP:rateRating('P','cancellation'),Q:sign(sumVal('Q')),R:sign(sumVal('R')),S:sign(sumVal('S')),T:pct(ratio(sumVal('S'),sumVal('R')+sumVal('S'))===null?null:100*ratio(sumVal('S'),sumVal('R')+sumVal('S'))),CT:rateRating('T','rts'),U:monthlyOverall().U,V:sign(sumVal('V')),W:sign(sumVal('W')),X:monthlyOverall().X,WA:sign(sumVal('WA')),WB:sign(sumVal('WB')),WC:monthlyOverall().WC,Y:monthlyOverall().Y};
-$('totals').innerHTML=`<tr><td>MONTHLY TOTAL</td>${COLUMN.map(([k])=>`<td>${values[k]??'—'}</td>`).join('')}<td>${completed} COMPLETE · ${needs} ACTION · ${all-completed} PENDING</td></tr>`}
+function renderTotals(){
+ let {sum,countFilled,completed,needs,all}=summary(),sumVal=k=>countFilled[k]?sum[k]:null;
+ const ratio=(a,b)=>a===null||b===null||b===0?null:a/b;
+ const b=sumVal('B'),m=sumVal('M'),o=sumVal('O'),r=sumVal('R'),t=sumVal('S');
+ let values={
+  B:sign(b),C:peso(sumVal('C')),D:peso(ratio(sumVal('F'),b)),E:dec(ratio(sumVal('C'),sumVal('F'))),F:peso(sumVal('F')),
+  G:sign(sumVal('G')),H:peso(sumVal('H')),I:peso(ratio(sumVal('F'),sumVal('G'))),J:dec(ratio(sumVal('H'),sumVal('F'))),K:monthlyOverall().K,
+  L:sign(sumVal('L')),M:sign(m),N:pct(ratio(m,b)===null?null:100*ratio(m,b)),O:sign(o),P:pct(ratio(o??0,b)===null?null:100*ratio(o??0,b)),
+  Q:sign(sumVal('Q')),R:sign(r),S:sign(t),T:pct(ratio((t??0),r===null?null:r+(t??0))===null?null:100*ratio((t??0),r+(t??0))),
+  U:monthlyOverall().U,V:sign(sumVal('V')),W:sign(sumVal('W')),X:monthlyOverall().X,
+  WA:sign(sumVal('WA')),WB:sign(sumVal('WB')),WC:monthlyOverall().WC,Y:monthlyOverall().Y
+ };
+ $('totals').innerHTML=`<tr><td>MONTHLY TOTAL</td>${COLUMN.map(([k])=>`<td>${values[k]??'—'}</td>`).join('')}<td>${completed} COMPLETE · ${needs} ACTION · ${all-completed} PENDING</td></tr>`;
+}
 function renderKpis(){
   let s=summary(),v=s.sum,n=s.countFilled,sm=k=>n[k]?v[k]:null;
   let items=[
@@ -555,7 +570,21 @@ function refresh(){renderRows();renderKpis();renderOverall();renderCharts()}
 function openMonth(){month=$('month').value;if(!/^\d{4}-\d{2}$/.test(month))return;monthData=db.months[month]??{};settings={...DEFAULT,...(db.settings[month]??{})};$('tableTitle').textContent=new Date(month+'-01T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'})+' · Daily Operations';renderSettings();refresh()}
 $('month').addEventListener('change',openMonth);$('filter').addEventListener('change',renderRows);$('search').addEventListener('input',renderRows);
 $('settings').addEventListener('change',e=>{let k=e.target.dataset.setting;if(!k)return;let v=Number(e.target.value);if(!Number.isFinite(v)||v<0){e.target.value=settings[k];return}settings[k]=v;save();refresh()});
-$('body').addEventListener('input',e=>{let inp=e.target,k=inp.dataset.field;if(!k)return;let d=inp.closest('tr').dataset.date;let r=monthData[d]??{};if(inp.value==='')delete r[k];else{let v=Number(inp.value);if(!Number.isFinite(v)||v<0)return;r[k]=v}if(!Object.keys(r).length)delete monthData[d];else monthData[d]=r;save();let o=getDerived(d),tr=inp.closest('tr');for(let col of ['D','E','I','J','K','CN','CP','CT','U','X','WC','Y','Z']){let el=tr.querySelector(`[data-output="${col}"]`);if(el)el.innerHTML=['D','E','I','J'].includes(col)?(num(r,col)===null?'—':(['D','I'].includes(col)?peso(num(r,col)):dec(num(r,col)))):pill(o[col])}tr.classList.toggle('offday',o.X.includes('SCHEDULED OFF'));renderTotals();renderKpis();renderOverall();renderCharts()});
+$('body').addEventListener('input',e=>{
+ let inp=e.target,k=inp.dataset.field;if(!k)return;
+ let d=inp.closest('tr').dataset.date,r=monthData[d]??{};
+ if(inp.value==='')delete r[k];else{let v=Number(inp.value);if(!Number.isFinite(v)||v<0)return;r[k]=v;}
+ if(!Object.keys(r).length)delete monthData[d];else monthData[d]=r;
+ save();let o=getDerived(d),tr=inp.closest('tr');
+ for(let col of ['D','E','I','J','N','P','T','K','U','X','WC','Y','Z']){
+  let el=tr.querySelector(`[data-output="${col}"]`);if(!el)continue;
+  if(['D','E','I','J','N','P','T'].includes(col)){
+   let v=num(r,col);el.textContent=v===null?'—':['N','P','T'].includes(col)?pct(v):['D','I'].includes(col)?peso(v):dec(v);
+  }else el.innerHTML=pill(o[col]);
+ }
+ tr.classList.toggle('offday',o.X.includes('SCHEDULED OFF'));
+ renderTotals();renderKpis();renderOverall();renderCharts();
+});
 $('body').addEventListener('change',e=>{if(e.target.dataset.field&&$('filter').value!=='all')renderRows()});
 function csvCell(s){let txt=String(s??'');return /[",\n\r]/.test(txt)?'"'+txt.replaceAll('"','""')+'"':txt}
 function download(name,content,mime){let blob=new Blob([content],{type:mime}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
