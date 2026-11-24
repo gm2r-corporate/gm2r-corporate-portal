@@ -483,10 +483,19 @@ function remarks(r,m,c,cr,wh){
  }
  return arr.length?arr.join(' + '):'✅ ALL GOOD';
 }
+// Operation status is based ONLY on the four final department ratings.
+// Incomplete ratings override critical/warnings; scheduled off is neutral.
+function classifyOperationStatus(ratings){
+ const list=Array.isArray(ratings)?ratings:[];
+ if(!list.length||list.some(v=>typeof v!=='string'||!v.trim()||/PENDING|INCOMPLETE|IN PROGRESS/i.test(v)))return '⚪ INCOMPLETE DATA';
+ if(list.some(v=>/UNDERPERFORMING|POOR|QUOTA NOT MET/i.test(v)))return '🔴 ACTION REQUIRED';
+ if(list.some(v=>/NEEDS IMPROVEMENT|QUOTA AT RISK/i.test(v)))return '🟡 MONITORING REQUIRED';
+ return '🟢 OPERATIONAL';
+}
 function getDerived(date){
  const r=getR(date),m=markRank(r),c=csrRank(r),cr=creativeRank(date,r),wh=warehouseRank(r);
  const note=remarks(r,m,c,cr,wh);
- const daily=note.includes('PENDING')?'⚪ INCOMPLETE DATA':note.includes('CRITICAL')?'🔴 ACTION REQUIRED':note==='✅ ALL GOOD'?'🟢 OPERATIONAL':'🟠 MONITORING REQUIRED';
+ const daily=classifyOperationStatus([m,c,cr,wh]);
  return {K:m,U:c,X:cr,WC:wh,Y:daily,Z:note};
 }
 function color(s){if(s.includes('PENDING')||s.includes('SCHEDULED OFF')||s.includes('INCOMPLETE'))return 'gray';if(/🔴|POOR|CRITICAL|NOT MET|UNDERPERFORMING/.test(s))return 'red';if(/🟠|RISK|MONITORING/.test(s))return 'orange';if(/🟡|SATISFACTORY|PARTIALLY|GOOD$/.test(s)&&!s.includes('VERY GOOD')&&!s.includes('ALL GOOD'))return 'yellow';if(/🔵|VERY GOOD|HIGH PERFORMING|TRACK/.test(s))return 'blue';return 'green'}
@@ -496,7 +505,7 @@ function makeHead(){$('fieldheaders').innerHTML=COLUMN.map(([k,title])=>`<th cla
 function renderSettings(){$('settings').innerHTML=SETS.map(([k,n,u])=>`<div class="setting"><label for="set-${k}">${n}</label><input id="set-${k}" type="number" step="any" value="${settings[k]}" data-setting="${k}"/><small>${u}</small></div>`).join('')}
 function datePass(d){let f=$('filter').value,q=$('search').value.trim().toLowerCase(),dv=getDerived(d);if(q&&!dateLabel(d).toLowerCase().includes(q)&&!d.includes(q))return false;return f==='all'||(f==='pending'&&dv.Z.includes('PENDING'))||(f==='complete'&&!dv.Z.includes('PENDING'))||(f==='alerts'&&dv.Y.includes('ACTION REQUIRED')||f==='alerts'&&dv.Y.includes('MONITORING'))||(f==='off'&&dv.X.includes('SCHEDULED OFF'))}
 function renderRows(){let all=dates(),visible=all.filter(datePass);$('count').textContent=`${visible.length} / ${all.length} days`;
-$('body').innerHTML=visible.map(d=>{let r=getR(d),o=getDerived(d),off=o.X.includes('SCHEDULED OFF');return `<tr data-date="${d}" class="${off?'offday':''}"><td>${dateLabel(d)}</td>${COLUMN.map(([k,n,t])=>{if(t==='rank'||t==='status')return `<td class="out" data-output="${k}">${pill(o[k])}</td>`;if(t==='calc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated">${v===null?'—':(k==='D'||k==='I'?peso(v):dec(v))}</td>`}if(t==='pctcalc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated from counts">${v===null?'—':pct(v)}</td>`}let v=r[k]??'',isPct=t==='pct';return `<td class="${t==='money'?'currency-cell':''}">${t==='money'?'<span class="currency-symbol">₱</span>':''}<input data-field="${k}" aria-label="${n} ${d}" ${['C','F','H'].includes(k)?'class="money"':''} type="number" step="any" ${k==='O'?'':'min="0"'} placeholder="—" value="${v}" title="${n} · ${d}${isPct?' · enter 85.8 for 85.8%':''}"/></td>`}).join('')}<td class="remarks" data-output="Z">${pill(o.Z)}</td></tr>`}).join('')||'<tr><td class="empty" colspan="29">No dates match this filter.</td></tr>';renderTotals()}
+$('body').innerHTML=visible.map(d=>{let r=getR(d),o=getDerived(d),off=o.X.includes('SCHEDULED OFF');return `<tr data-date="${d}" class="${off?'offday':''}"><td>${dateLabel(d)}</td>${COLUMN.map(([k,n,t])=>{if(t==='rank'||t==='status')return `<td class="out" data-output="${k}">${k==='Y'?overallOperationPill(o[k]):pill(o[k])}</td>`;if(t==='calc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated">${v===null?'—':(k==='D'||k==='I'?peso(v):dec(v))}</td>`}if(t==='pctcalc'){let v=num(r,k);return `<td class="out computed" data-output="${k}" title="Automatically calculated from counts">${v===null?'—':pct(v)}</td>`}let v=r[k]??'',isPct=t==='pct';return `<td class="${t==='money'?'currency-cell':''}">${t==='money'?'<span class="currency-symbol">₱</span>':''}<input data-field="${k}" aria-label="${n} ${d}" ${['C','F','H'].includes(k)?'class="money"':''} type="number" step="any" ${k==='O'?'':'min="0"'} placeholder="—" value="${v}" title="${n} · ${d}${isPct?' · enter 85.8 for 85.8%':''}"/></td>`}).join('')}<td class="remarks" data-output="Z">${pill(o.Z)}</td></tr>`}).join('')||'<tr><td class="empty" colspan="29">No dates match this filter.</td></tr>';renderTotals()}
 function summary(){let datesAll=dates(),sum={};for(let k of FIELDS)sum[k]=0;let countFilled={},active=0,completed=0,needs=0;for(let d of datesAll){let r=getR(d);if(FIELDS.some(k=>num(r,k)!==null))active++;let o=getDerived(d);if(!o.Z.includes('PENDING'))completed++;if(o.Y.includes('MONITORING')||o.Y.includes('ACTION REQUIRED'))needs++;for(let k of FIELDS){let v=num(r,k);if(v!==null){sum[k]+=v;countFilled[k]=(countFilled[k]??0)+1}}}return {sum,countFilled,active,completed,needs,all:datesAll.length}}
 // Exact monthly overall-ranking thresholds from the supplied spreadsheet formulas.
 // Monthly ratings evaluate every calendar day, including days with missing inputs.
@@ -523,16 +532,26 @@ function monthlyOverall(){
     success/crTotal>=.9?'🔵 QUOTA ON TRACK':success/crTotal>=.75?'🟡 PARTIALLY ACHIEVED':success/crTotal>=.5?'🟠 QUOTA AT RISK':'🔴 QUOTA NOT MET';
   const wh=ranks('WC'),whHit=count(wh,'HIT QUOTA'),whTrack=count(wh,'QUOTA ON TRACK'),whRisk=count(wh,'QUOTA AT RISK'),whPending=count(wh,'PENDING DATA'),whOff=count(wh,'SCHEDULED OFF'),whCompleted=whHit+whTrack+whRisk;
   const WC=whCompleted===0?(whPending>0?'⚪ PENDING DATA':'⚪ SCHEDULED OFF'):whPending>0?'🟠 IN PROGRESS':whHit===whCompleted?'🟢 HIT QUOTA':(whHit+whTrack)/whCompleted>=.5?'🔵 QUOTA ON TRACK':'🟠 QUOTA AT RISK';
-  const operations=ranks('Y'),operational=count(operations,'OPERATIONAL'),monitoring=count(operations,'MONITORING REQUIRED'),critical=count(operations,'ACTION REQUIRED');
-  const opCompleted=operational+monitoring+critical;
-  const score=opCompleted?(operational+monitoring*.75)/opCompleted:0,criticalRate=opCompleted?critical/opCompleted:0;
-  const Y=opCompleted===0?'⚪ PENDING DATA':score>=.9&&critical===0?'🟢 OPERATIONAL':score>=.75&&criticalRate<.1?'🔵 STABLE OPERATIONS':score>=.6&&criticalRate<.2?'🟡 MONITORING REQUIRED':score>=.4&&criticalRate<.3?'🟠 NEEDS IMPROVEMENT':'🔴 ACTION REQUIRED';
-  return {K,U,X,WC,Y,meta:{WC:`${whCompleted} rated · ${whHit} hit quota · ${whOff} scheduled off · ${whPending} pending`,K:`${mCompleted} rated days · average ${average.toFixed(2)} / 5`,U:`${csr.length-cPending} rated · ${cPending} pending`,X:`${crTotal} rated · ${crOff} scheduled off · ${crPending} pending`,Y:`${opCompleted} complete days · ${critical} action required`}};
+  // Monthly status uses all four DAILY department ratings for every
+  // reporting date, not the rounded monthly rankings or the individual alerts.
+  const finalRatings=dayRows.flatMap(row=>[row.K,row.U,row.X,row.WC]);
+  const Y=classifyOperationStatus(finalRatings);
+  const incompleteDays=dayRows.filter(row=>[row.K,row.U,row.X,row.WC].some(v=>!v||/PENDING|INCOMPLETE|IN PROGRESS/i.test(v))).length;
+  const criticalDays=dayRows.filter(row=>classifyOperationStatus([row.K,row.U,row.X,row.WC])==='🔴 ACTION REQUIRED').length;
+  const warningDays=dayRows.filter(row=>classifyOperationStatus([row.K,row.U,row.X,row.WC])==='🟡 MONITORING REQUIRED').length;
+  const statusReason=`${dayRows.length} reporting dates · ${incompleteDays} incomplete · ${criticalDays} critical · ${warningDays} warning`;
+  return {K,U,X,WC,Y,meta:{WC:`${whCompleted} rated · ${whHit} hit quota · ${whOff} scheduled off · ${whPending} pending`,K:`${mCompleted} rated days · average ${average.toFixed(2)} / 5`,U:`${csr.length-cPending} rated · ${cPending} pending`,X:`${crTotal} rated · ${crOff} scheduled off · ${crPending} pending`,Y:statusReason}};
+}
+// Use the requested indicator color for the monthly operation summary only.
+// All other existing department/daily status coloring stays exactly as before.
+function overallOperationPill(v){
+ const colorClass=v.includes('INCOMPLETE')?'gray':v.includes('ACTION REQUIRED')?'red':v.includes('MONITORING REQUIRED')?'yellow':'green';
+ return `<span class="pill ${colorClass}">${v}</span>`;
 }
 function renderOverall(){
   const o=monthlyOverall();
   const cards=[['K','Marketing Overall Rating'],['U','CSR Overall Rating'],['X','Creative Overall Rating'],['WC','Warehouse Overall Rating'],['Y','Operation Status Overall']];
-  $('overallRatings').innerHTML=cards.map(([key,title])=>`<div class="overall-card"><div class="label">${title}</div><div class="overall-value">${pill(o[key])}</div><div class="info">${o.meta[key]}</div></div>`).join('');
+  $('overallRatings').innerHTML=cards.map(([key,title])=>`<div class="overall-card"><div class="label">${title}</div><div class="overall-value">${key==='Y'?overallOperationPill(o[key]):pill(o[key])}</div><div class="info">${o.meta[key]}</div></div>`).join('');
 }
 function renderTotals(){
  let {sum,countFilled,completed,needs,all}=summary(),sumVal=k=>countFilled[k]?sum[k]:null;
@@ -546,7 +565,7 @@ function renderTotals(){
   U:monthlyOverall().U,V:sign(sumVal('V')),W:sign(sumVal('W')),X:monthlyOverall().X,
   WA:sign(sumVal('WA')),WB:sign(sumVal('WB')),WC:monthlyOverall().WC,Y:monthlyOverall().Y
  };
- $('totals').innerHTML=`<tr><td>MONTHLY TOTAL</td>${COLUMN.map(([k])=>`<td>${values[k]??'—'}</td>`).join('')}<td>${completed} COMPLETE · ${needs} ACTION · ${all-completed} PENDING</td></tr>`;
+ $('totals').innerHTML=`<tr><td>MONTHLY TOTAL</td>${COLUMN.map(([k])=>`<td>${k==='Y'?overallOperationPill(values[k]):(values[k]??'—')}</td>`).join('')}<td>${completed} COMPLETE · ${needs} ACTION · ${all-completed} PENDING</td></tr>`;
 }
 function renderKpis(){
   let s=summary(),v=s.sum,n=s.countFilled,sm=k=>n[k]?v[k]:null;
@@ -580,7 +599,7 @@ $('body').addEventListener('input',e=>{
   let el=tr.querySelector(`[data-output="${col}"]`);if(!el)continue;
   if(['D','E','I','J','N','P','T'].includes(col)){
    let v=num(r,col);el.textContent=v===null?'—':['N','P','T'].includes(col)?pct(v):['D','I'].includes(col)?peso(v):dec(v);
-  }else el.innerHTML=pill(o[col]);
+  }else el.innerHTML=col==='Y'?overallOperationPill(o[col]):pill(o[col]);
  }
  tr.classList.toggle('offday',o.X.includes('SCHEDULED OFF'));
  renderTotals();renderKpis();renderOverall();renderCharts();
