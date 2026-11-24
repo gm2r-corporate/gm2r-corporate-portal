@@ -297,12 +297,14 @@ body.gm2r-locked .cc-editor,body.gm2r-locked .cc-controls{display:none!important
 #gm2rCloudMigration{border:1px solid #e9c67c;background:#fff8e7;padding:15px;border-radius:12px;max-width:1050px;margin:18px auto;text-align:center}
 #gm2rCloudMigration p{line-height:1.6;margin:8px auto}
 /* Viewer pages are always displayed, even before Firebase is connected. */
-/* Viewer mode: keep all data management and recovery tools completely invisible.
-   These are interface restrictions; Firestore Security Rules protect server writes. */
-.top .actions[hidden] { display: none !important; }
-body.gm2r-locked .top .actions,
-body.gm2r-locked #recoveryOpen,
-body.gm2r-locked #gm2rRecoveryOverlay { display: none !important; }
+/* Administrator controls: visible ONLY during an authenticated, unlocked editor session.
+   On the KPI tab, the header actions must also respect the hidden attribute. */
+.top .actions[hidden], #recoveryOpen[hidden] { display:none !important; }
+body:not(.gm2r-editor-active) .top .actions,
+body:not(.gm2r-editor-active) #recoveryOpen,
+body:not(.gm2r-editor-active) #gm2rRecoveryOverlay { display:none !important; }
+body.gm2r-editor-active .top .actions:not([hidden]) { display:flex !important; }
+body.gm2r-editor-active #recoveryOpen:not([hidden]) { display:inline-block !important; }
 </style>
 </head>
 <body class="gm2r-locked"><div id="gm2rCloudGate" hidden role="dialog" aria-modal="true" aria-label="GM2R editor authentication">
@@ -326,7 +328,7 @@ body.gm2r-locked #gm2rRecoveryOverlay { display: none !important; }
  <button class="btn" id="gm2rCloudRestoreButton" type="button">UPLOAD FULL GM2R BACKUP JSON</button>
  <input type="file" id="gm2rCloudRestoreFile" accept=".json,application/json" hidden>
 </div>
-<header class="top"><div class="brand"><div class="brandmark">GM2R</div><div><h1>GM2R CORPORATE COMMAND CENTER</h1><p class="company-name">GM2R DIGITAL SOLUTION CORPORATION</p><p class="department-name">Marketing · Customer Service · Creatives · Warehouse · Operations</p></div></div><div class="actions"><button class="btn dark" id="csvExport">↧ Export CSV</button><button class="btn dark" id="csvImport" style="display:none">↥ Import CSV</button><button class="btn dark" id="backupExport">↧ Backup JSON</button><button class="btn dark" id="backupImport" style="display:none">↥ Restore JSON</button><input type="file" id="fileInput" accept=".csv,.json" class="hide"/><button class="btn danger" id="clearMonth">Reset month</button></div></header>
+<header class="top"><div class="brand"><div class="brandmark">GM2R</div><div><h1>GM2R CORPORATE COMMAND CENTER</h1><p class="company-name">GM2R DIGITAL SOLUTION CORPORATION</p><p class="department-name">Marketing · Customer Service · Creatives · Warehouse · Operations</p></div></div><div class="actions" hidden><button class="btn dark" id="csvExport">↧ Export CSV</button><button class="btn dark" id="csvImport">↥ Import CSV</button><button class="btn dark" id="backupExport">↧ Backup JSON</button><button class="btn dark" id="backupImport">↥ Restore JSON</button><input type="file" id="fileInput" accept=".csv,.json" class="hide"/><button class="btn danger" id="clearMonth">Reset month</button></div></header>
 
 <nav class="mainnav" aria-label="Website sections">
  <button type="button" class="mainnav-btn active" data-main-tab="home">🏠 HOME</button>
@@ -334,7 +336,7 @@ body.gm2r-locked #gm2rRecoveryOverlay { display: none !important; }
  <button type="button" class="mainnav-btn" data-main-tab="applications">📅 EMPLOYEE LEAVE APPLICATION</button>
  <button type="button" class="mainnav-btn" data-main-tab="attendance">🏆 GM2R ATTENDANCE LEADERBOARD</button>
  <button type="button" class="mainnav-btn" data-main-tab="companychart">🏢 GM2R COMPANY CHART</button>
- <button type="button" class="mainnav-btn" id="recoveryOpen" title="Back up or restore all GM2R records">💾 BACKUP & RECOVERY</button>
+ <button type="button" class="mainnav-btn" id="recoveryOpen" hidden title="Back up or restore all GM2R records">💾 BACKUP & RECOVERY</button>
  <button type="button" class="mainnav-btn editor-access" id="editorAccessBtn" aria-label="Unlock editing with password">🔒 UNLOCK EDITING</button>
 </nav>
 <div id="editorStateInfo" class="gm2r-edit-note" role="status">🔒 Viewer mode · All dashboards and calendars are available to view.</div>
@@ -642,7 +644,7 @@ $('appDepartment').innerHTML='<option value="">Select department</option>'+DEPTS
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function notify(msg){let t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(notify.tm);notify.tm=setTimeout(()=>t.classList.remove('show'),3100)}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(apps))}catch{alert('Browser saving is unavailable. Export a backup to protect your data.')}}
-function switchMain(to){if(!['home','kpi','applications','attendance','companychart'].includes(to))return;for(const btn of document.querySelectorAll('[data-main-tab]'))btn.classList.toggle('active',btn.dataset.mainTab===to);$('homePage').hidden=to!=='home';$('kpiPage').hidden=to!=='kpi';$('applicationsPage').hidden=to!=='applications';if($('attendancePage'))$('attendancePage').hidden=to!=='attendance';if($('companyChartPage'))$('companyChartPage').hidden=to!=='companychart';if(to==='companychart')window.gm2rRenderCompanyChart?.();if(to==='attendance')window.gm2rRenderAttendance?.();document.querySelector('.top .actions').hidden=to!=='kpi';if(to==='applications')renderApps();if(to==='kpi')window.dispatchEvent(new Event('resize'));window.scrollTo({top:0,behavior:'instant'});}
+function switchMain(to){if(!['home','kpi','applications','attendance','companychart'].includes(to))return;for(const btn of document.querySelectorAll('[data-main-tab]'))btn.classList.toggle('active',btn.dataset.mainTab===to);$('homePage').hidden=to!=='home';$('kpiPage').hidden=to!=='kpi';$('applicationsPage').hidden=to!=='applications';if($('attendancePage'))$('attendancePage').hidden=to!=='attendance';if($('companyChartPage'))$('companyChartPage').hidden=to!=='companychart';if(to==='companychart')window.gm2rRenderCompanyChart?.();if(to==='attendance')window.gm2rRenderAttendance?.();document.querySelector('.top .actions').hidden=to!=='kpi';window.gm2rSyncAdminControls?.();if(to==='applications')renderApps();if(to==='kpi')window.dispatchEvent(new Event('resize'));window.scrollTo({top:0,behavior:'instant'});}
 for(const btn of document.querySelectorAll('[data-main-tab]'))btn.onclick=()=>switchMain(btn.dataset.mainTab);
 function setSubtab(sub){current=sub;for(const btn of document.querySelectorAll('[data-subtab]'))btn.classList.toggle('active',btn.dataset.subtab===sub);let isForm=TITLES[sub]!==undefined;
  $('formPanel').hidden=!isForm;$('calendarPanel').hidden=sub!=='calendar';$('recordsPanel').hidden=!(sub==='records'||isForm);
@@ -816,9 +818,20 @@ show();
  const guarded='#tracker input[data-field],#settings input[data-setting],#requestForm input,#requestForm select,#requestForm textarea,#homeProfileForm input,#homeProfileForm textarea,#recordsBody .status-choice';
  const actions='#homeEditToggle,#homeReset,#homeImport,#csvExport,#csvImport,#backupExport,#backupImport,#clearMonth,#recoveryOpen,#restoreApps,#submitRequest,#cancelEdit,#recordsBody .rec-edit,#recordsBody .rec-delete,#gm2rRecoveryRestore,#gm2rRecoveryDownload';
  function authorized(){return !!window.gm2rIsAdmin && !!window.gm2rCloudReady;}
+ function syncAdminControls(){
+   const editor=authorized()&&unlocked;
+   const actions=document.querySelector('.top .actions');
+   const onKpi=!!document.querySelector('[data-main-tab="kpi"].active');
+   if(actions)actions.hidden=!(editor&&onKpi);
+   const recovery=document.getElementById('recoveryOpen');
+   if(recovery)recovery.hidden=!editor;
+ }
+ window.gm2rSyncAdminControls=syncAdminControls;
  function render(){
    const editor=authorized()&&unlocked;
    document.body.classList.toggle('gm2r-locked',!editor);
+   document.body.classList.toggle('gm2r-editor-active',editor);
+   syncAdminControls();
    if(!editor){const recovery=document.getElementById('gm2rRecoveryOverlay');if(recovery)recovery.hidden=true;}
    btn.hidden=false;btn.style.display='';
    btn.textContent=editor?'🔓 LOCK EDITING':'🔒 UNLOCK EDITING';
