@@ -163,8 +163,6 @@ body.gm2r-locked #applicationsPage .apps-intro > div:first-child {text-align:cen
 .att-winner{position:relative;min-width:0;min-height:235px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;border-radius:22px;padding:22px 14px 20px;overflow:hidden;background:linear-gradient(155deg,color-mix(in srgb,var(--att-color) 80%,#fff 20%),color-mix(in srgb,var(--att-color) 78%,#000 22%));box-shadow:0 14px 35px #0007;border:1px solid #ffffff44;text-align:center}
 .att-winner.first{min-height:293px;background:linear-gradient(155deg,color-mix(in srgb,var(--att-color) 60%,#fff 40%),var(--att-color) 55%,color-mix(in srgb,var(--att-color) 65%,#000 35%));border-color:#acd5fd}
 .att-winner:before{content:'';position:absolute;inset:-60% -45% auto auto;width:95%;height:100%;background:radial-gradient(circle,#ffffff60,transparent 65%);pointer-events:none}
-.att-winner .att-rank-label{align-self:flex-start;font-weight:950;font-size:11px;letter-spacing:1px;color:#fff}
-.att-winner .att-medal{font-size:42px;line-height:1;filter:drop-shadow(0 3px 7px #0005)}
 .att-winner .att-avatar,.att-winner .att-initials{width:80px;height:80px;border:3px solid #ffffffaa;margin:0 auto 10px}
 .att-winner.first .att-avatar,.att-winner.first .att-initials{width:96px;height:96px}
 .att-winner .att-name{font-size:clamp(15px,1.7vw,23px);line-height:1.12;font-weight:950;text-transform:uppercase;color:#fff;overflow-wrap:anywhere}
@@ -173,7 +171,7 @@ body.gm2r-locked #applicationsPage .apps-intro > div:first-child {text-align:cen
 .att-winner .att-score{font-size:clamp(30px,4.5vw,53px);font-weight:950;line-height:1;color:white;margin:13px 0 4px}
 .att-winner .att-score small{font-size:14px}
 .att-winner .att-score-label{font-size:10px;font-weight:850;color:#edf4fd;letter-spacing:.6px}
-.att-winner .att-statline{font-size:10px;color:white;margin-top:12px;display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap}
+.att-winner .att-statline{font-size:10px;color:white;margin-top:17px;display:flex;justify-content:space-around;gap:12px;flex-wrap:wrap}
 .att-rank-list{max-width:980px;margin:auto;display:grid;gap:10px}
 .att-rank-row{background:#17191e;border:1px solid #41434d;border-radius:17px;display:grid;grid-template-columns:55px 55px minmax(90px,1.5fr) minmax(100px,1fr) repeat(3,minmax(55px,.55fr));gap:12px;align-items:center;padding:12px 15px;color:#fff;text-align:center}
 .att-rank-row .att-avatar,.att-rank-row .att-initials{width:47px;height:47px;margin:0;border:2px solid var(--att-color);font-size:15px}
@@ -191,7 +189,7 @@ body.gm2r-locked #applicationsPage .apps-intro > div:first-child {text-align:cen
 .att-log-panel h3{color:#18344f}
 .att-statsbar{display:flex;justify-content:center;flex-wrap:wrap;gap:9px;margin:14px 0}
 .att-statsbar span{background:#dfeaf5;color:#254360;border-radius:12px;padding:10px 16px;font-size:12px;font-weight:850}
-@media(max-width:750px){.att-podium{gap:6px}.att-winner{padding:16px 7px;min-height:245px}.att-winner.first{min-height:280px}.att-winner .att-avatar,.att-winner .att-initials{width:57px;height:57px}.att-winner.first .att-avatar,.att-winner.first .att-initials{width:67px;height:67px}.att-winner .att-medal{font-size:28px}.att-winner .att-statline{font-size:9px}.att-rank-row{grid-template-columns:35px 43px 1fr 58px;gap:7px;padding:9px}.att-rank-row .att-dept,.att-rank-row .att-stat:nth-last-child(-n+2){display:none}.att-rank-row .att-avatar,.att-rank-row .att-initials{width:40px;height:40px}}
+@media(max-width:750px){.att-podium{gap:6px}.att-winner{padding:16px 7px;min-height:245px}.att-winner.first{min-height:280px}.att-winner .att-avatar,.att-winner .att-initials{width:57px;height:57px}.att-winner.first .att-avatar,.att-winner.first .att-initials{width:67px;height:67px}.att-winner .att-statline{font-size:9px}.att-rank-row{grid-template-columns:35px 43px 1fr 58px;gap:7px;padding:9px}.att-rank-row .att-dept,.att-rank-row .att-stat:nth-last-child(-n+2){display:none}.att-rank-row .att-avatar,.att-rank-row .att-initials{width:40px;height:40px}}
 
 /* GM2R automatic rankings by department, following the overall leaderboard */
 .att-department-rankings{max-width:1080px;margin:38px auto 8px;text-align:center}
@@ -982,7 +980,7 @@ show();
   <header class="att-banner"><h2>🏆 GM2R EMPLOYEE LEADERBOARD</h2><p>GM2R DIGITAL SOLUTION CORPORATION · Top Attendance Performers</p></header>
   <nav class="att-subnav" aria-label="Employee leaderboard sections"><button type="button" class="att-tab-btn active" data-att-tab="dashboard">🏆 LEADERBOARD DASHBOARD</button><button type="button" class="att-tab-btn att-editor-only" data-att-tab="log">✅ ATTENDANCE & ABSENCE LOG</button></nav>
   <section id="attDashboardView">
-   <div class="att-panel att-dash-panel"><h3>TOP PERFORMERS OF THE MONTH</h3><p class="att-note">Monthly attendance ranking · 1st, 2nd and 3rd place with department colors and profile photos</p>
+   <div class="att-panel att-dash-panel"><h3>TOP PERFORMERS OF THE MONTH</h3><p class="att-note">Automatically ranked by monthly PRESENT days · Highest attendance first · Department colors and profile photos</p>
     <div class="att-tools"><label for="attMonth">Report Month</label><input id="attMonth" type="month" value="2026-11"/><label for="attDeptView">Department</label><select id="attDeptView"><option value="">All Departments</option><option>Marketing</option><option>CSR</option><option>Creative</option><option>Warehouse</option><option>Encoding</option></select></div>
     <div class="att-dept-legend"><span style="background:#2177c7">MARKETING</span><span style="background:#118d69">CSR</span><span style="background:#7954bd">CREATIVES</span><span style="background:#171c23;border:1px solid #617083">WAREHOUSE</span><span style="background:#ce3048">ENCODING</span></div>
     <div id="attLeaderboard" aria-live="polite"></div>
@@ -1106,11 +1104,11 @@ const employees=()=>db.employees.filter(x=>x&&x.id&&x.name&&depts.includes(x.dep
 const monthRecords=(id,month)=>Object.entries(db.checks).filter(([date,day])=>date.startsWith(month)&&day&&day[id]&&['present','absent'].includes(day[id].status)).map(([date,day])=>({date,...day[id]}));
 const month=()=> $('attMonth').value;
 function photoHtml(e,cls='att-avatar'){return e.photo?.startsWith('data:image/')?`<img class="${cls}" alt="Profile photo of ${esc(e.name)}" src="${e.photo}"/>`:`<div class="att-initials">${esc(e.name.trim().split(/\s+/).slice(0,2).map(t=>t[0]||'').join('').toUpperCase())}</div>`}
-function renderLeaderboard(){let view=$('attDeptView').value,mm=month();let list=employees().filter(e=>!view||e.dept===view).map(e=>{const logs=monthRecords(e.id,mm),present=logs.filter(x=>x.status==='present').length,absent=logs.filter(x=>x.status==='absent').length;return {...e,present,absent,checked:logs.length,rate:logs.length?100*present/logs.length:null}});list.sort((a,b)=>(b.rate??-1)-(a.rate??-1)||b.present-a.present||a.absent-b.absent||a.name.localeCompare(b.name));
- const winner=(e,rank)=>`<article class="att-winner ${rank===1?'first':''}" style="--att-color:${deptColor[e.dept]}"><div class="att-rank-label">RANK ${rank}</div><div>${photoHtml(e)}<div class="att-name">${esc(e.name)}</div><div class="att-role">${esc(e.position)}</div><span class="att-dept">${esc(e.dept.toUpperCase())}</span></div><div><div class="att-score">${e.rate===null?'—':e.rate.toFixed(0)+'<small>%</small>'}</div><div class="att-score-label">ATTENDANCE RATE</div><div class="att-medal">${['','🏆','🥈','🥉'][rank]}</div><div class="att-statline"><span>✅ ${e.present} PRESENT</span><span>❌ ${e.absent} ABSENT</span></div></div></article>`;
+function renderLeaderboard(){let view=$('attDeptView').value,mm=month();let list=employees().filter(e=>!view||e.dept===view).map(e=>{const logs=monthRecords(e.id,mm),present=logs.filter(x=>x.status==='present').length,absent=logs.filter(x=>x.status==='absent').length;return {...e,present,absent,checked:logs.length,rate:logs.length?100*present/logs.length:null}});list.sort((a,b)=>b.present-a.present||a.absent-b.absent||(b.rate??-1)-(a.rate??-1)||a.name.localeCompare(b.name));
+ const winner=(e,rank)=>`<article class="att-winner ${rank===1?'first':''}" style="--att-color:${deptColor[e.dept]}"><div>${photoHtml(e)}<div class="att-name">${esc(e.name)}</div><div class="att-role">${esc(e.position)}</div><span class="att-dept">${esc(e.dept.toUpperCase())}</span></div><div><div class="att-score">${e.rate===null?'—':e.rate.toFixed(0)+'<small>%</small>'}</div><div class="att-score-label">ATTENDANCE RATE</div><div class="att-statline"><span>✅ ${e.present} PRESENT</span><span>❌ ${e.absent} ABSENT</span></div></div></article>`;
  const row=(e,i)=>`<article class="att-rank-row" style="--att-color:${deptColor[e.dept]}"><div class="att-rank-number">#${i+1}</div><div>${photoHtml(e)}</div><div><div class="att-name">${esc(e.name)}</div><div class="att-role">${esc(e.position)}</div></div><div><span class="att-dept">${esc(e.dept.toUpperCase())}</span></div><div class="att-stat"><b>${e.present}</b><small>PRESENT</small></div><div class="att-stat"><b>${e.absent}</b><small>ABSENT</small></div><div class="att-stat"><b>${e.rate===null?'—':e.rate.toFixed(0)+'%'}</b><small>ATTENDANCE</small></div></article>`;
- const top=list.slice(0,3),remaining=list.slice(3);
- $('attLeaderboard').innerHTML=list.length?`<div class="att-podium">${top[1]?winner(top[1],2):'<div></div>'}${winner(top[0],1)}${top[2]?winner(top[2],3):'<div></div>'}</div><div class="att-rank-list">${remaining.map((e,i)=>row(e,i+3)).join('')}</div>`:'<p class="att-empty" style="color:#c9d7e8">No employees registered in this department yet. Unlock editing to add employee profiles.</p>';
+ const qualified=list.filter(e=>e.checked>0),top=qualified.slice(0,3),remaining=list.filter(e=>!top.some(t=>t.id===e.id));
+ $('attLeaderboard').innerHTML=list.length?`${top.length?`<div class="att-podium">${top[1]?winner(top[1],2):'<div></div>'}${winner(top[0],1)}${top[2]?winner(top[2],3):'<div></div>'}</div>`:'<p class="att-empty" style="color:#c9d7e8">No attendance has been recorded for the selected month yet.</p>'}<div class="att-rank-list">${remaining.map((e,i)=>row(e,i+top.length)).join('')}</div>`:'<p class="att-empty" style="color:#c9d7e8">No employees registered in this department yet. Unlock editing to add employee profiles.</p>';
 }
 function renderDepartmentRankings(){
  const mm=month();
@@ -1118,7 +1116,7 @@ function renderDepartmentRankings(){
   const logs=monthRecords(e.id,mm),present=logs.filter(x=>x.status==='present').length,absent=logs.filter(x=>x.status==='absent').length;
   return {...e,present,absent,checked:logs.length,rate:logs.length?100*present/logs.length:null};
  });
- const sorted=(a,b)=>(b.rate??-1)-(a.rate??-1)||b.present-a.present||a.absent-b.absent||a.name.localeCompare(b.name);
+ const sorted=(a,b)=>b.present-a.present||a.absent-b.absent||(b.rate??-1)-(a.rate??-1)||a.name.localeCompare(b.name);
  const headings={Marketing:'MARKETING',CSR:'CUSTOMER SERVICE (CSR)',Creative:'CREATIVES',Warehouse:'WAREHOUSE',Encoding:'ENCODING'};
  $('attDeptRankings').innerHTML=depts.map(dept=>{
   const members=ranked.filter(e=>e.dept===dept).sort(sorted);
