@@ -272,6 +272,78 @@ body.gm2r-locked #applicationsPage .apps-intro > div:first-child {text-align:cen
 @media(max-width:850px){#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes{width:calc((100% - 10px)/2)}}
 @media(max-width:540px){#kpis .gm2r-monthly-row.spend{align-items:center}#kpis .gm2r-monthly-row.spend .gm2r-monthly-boxes{width:calc((100% - 7px)/2)}}
 
+
+/* GM2R presentation motion — subtle, GPU-friendly, no motion for accessibility users */
+@keyframes gm2r-page-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes gm2r-item-enter {
+  from { opacity: 0; transform: translateY(9px) scale(.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes gm2r-graph-reveal {
+  from { clip-path: inset(0 100% 0 0); opacity:.55; }
+  to { clip-path: inset(0 0 0 0); opacity:1; }
+}
+@keyframes gm2r-progress-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .site-page:not([hidden]) { animation: gm2r-page-enter .36s ease-out both; }
+  #kpiPage:not([hidden]) .gm2r-monthly-row .kpi,
+  #kpiPage:not([hidden]) .chartcard,
+  #attendancePage:not([hidden]) .att-winner,
+  #attendancePage:not([hidden]) .att-rank-row,
+  #attendancePage:not([hidden]) .att-dept-section,
+  #homePage:not([hidden]) .home-tile,
+  #companyChartPage:not([hidden]) .cc-person,
+  #applicationsPage:not([hidden]) .app-card {
+    animation: gm2r-item-enter .42s cubic-bezier(.2,.75,.25,1) both;
+  }
+  #kpiPage:not([hidden]) .gm2r-monthly-row .kpi:nth-child(2),
+  #attendancePage:not([hidden]) .att-winner:nth-child(2),
+  #homePage:not([hidden]) .home-tile:nth-child(2) { animation-delay: 65ms; }
+  #kpiPage:not([hidden]) .gm2r-monthly-row .kpi:nth-child(3),
+  #attendancePage:not([hidden]) .att-winner:nth-child(3),
+  #homePage:not([hidden]) .home-tile:nth-child(3) { animation-delay: 115ms; }
+  #kpiPage:not([hidden]) .gm2r-monthly-row .kpi:nth-child(4) { animation-delay: 155ms; }
+  #kpiPage:not([hidden]) .chartcard:nth-child(2),
+  #attendancePage:not([hidden]) .att-rank-row:nth-child(2) { animation-delay: 55ms; }
+  #kpiPage:not([hidden]) .chartcard:nth-child(3),
+  #attendancePage:not([hidden]) .att-rank-row:nth-child(3) { animation-delay: 100ms; }
+  #kpiPage:not([hidden]) .chartcard:nth-child(4) { animation-delay: 145ms; }
+  #kpiPage:not([hidden]) .chartcard:nth-child(5) { animation-delay: 190ms; }
+  #attendancePage:not([hidden]) .att-progress i { transform-origin: left center; animation: gm2r-progress-fill .75s ease-out both; }
+  #attendancePage:not([hidden]) .att-panel:not([hidden]),
+  #applicationsPage:not([hidden]) .app-panel:not([hidden]) { animation: gm2r-page-enter .3s ease-out both; }
+  .mainnav-btn, .att-tab-btn, .btn, .home-cta {
+    transition: background-color .2s ease, border-color .2s ease,
+      box-shadow .2s ease, filter .2s ease, transform .2s ease;
+  }
+  .mainnav-btn:hover, .att-tab-btn:hover, .btn:not(:disabled):hover, .home-cta:hover {
+    transform: translateY(-2px);
+  }
+  .gm2r-monthly-row .kpi, .chartcard, .att-winner, .att-rank-row, .home-tile {
+    transition: transform .22s ease, box-shadow .22s ease;
+  }
+  .gm2r-monthly-row .kpi:hover, .chartcard:hover,
+  .att-winner:hover, .att-rank-row:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px #1231491b;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-page, .site-page *, .chartcard canvas, .att-progress i {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Canvas drawing is controlled by viewport visibility, not an automatic CSS reveal. */
+#kpiPage .chartcard canvas { animation: none !important; clip-path: none !important; opacity: 1 !important; }
 </style>
 
 <style>
@@ -811,10 +883,121 @@ function renderKpis(){
     <div class="gm2r-monthly-row spend"><div class="gm2r-monthly-label ads">ADVERTISING SPEND</div><div class="gm2r-monthly-boxes">${card(spend)}</div></div>
     <div class="gm2r-monthly-row"><div class="gm2r-monthly-label filtered">FILTERED PERFORMANCE</div><div class="gm2r-monthly-boxes">${filtered.map(card).join('')}</div></div>`;
 }
-function plot(canvasId,series,yMax0){let c=$(canvasId),width=c.clientWidth||280,height=c.clientHeight||170,scale=window.devicePixelRatio||1;c.width=Math.round(width*scale);c.height=Math.round(height*scale);let ctx=c.getContext('2d');ctx.scale(scale,scale);const left=34,right=8,top=10,bottom=24,W=width-left-right,H=height-top-bottom;const values=series.flatMap(x=>x.values.filter(Number.isFinite));let max=Math.max(yMax0||0,...values,1);max*=1.1;ctx.font='10px system-ui';ctx.textAlign='right';ctx.fillStyle='#889aad';for(let i=0;i<=4;i++){let y=top+H*(1-i/4);ctx.strokeStyle='#e7edf3';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(left+W,y);ctx.stroke();ctx.fillText(max*i/4>=100?Math.round(max*i/4):Number((max*i/4).toFixed(1)),left-5,y+3)}let n=daysIn(month);ctx.textAlign='center';for(let x of [1,Math.ceil(n/4),Math.ceil(n/2),Math.ceil(n*3/4),n]){let xx=left+(x-1)*W/(n-1||1);ctx.fillText(x,xx,height-6)}for(let s of series){ctx.beginPath();ctx.lineWidth=s.dash?1.5:2;ctx.strokeStyle=s.color;ctx.setLineDash(s.dash?[5,4]:[]);let drawing=false;for(let i=0;i<s.values.length;i++){let val=s.values[i];if(!Number.isFinite(val)){drawing=false;continue}let x=left+i*W/(n-1||1),y=top+H*(1-val/max);drawing?ctx.lineTo(x,y):ctx.moveTo(x,y);drawing=true}ctx.stroke();ctx.setLineDash([])}}
-function renderCharts(){const all=dates(),val=k=>all.map(d=>num(getR(d),k)),line=(values,color,dash=false)=>({values,color,dash});plot('ordersChart',[line(val('B'),'#287eb9'),line(val('G'),'#eda33b'),line(all.map(()=>Number(settings.goalOrders)),'#a0afc0',true)],settings.goalOrders);plot('roasChart',[line(val('E'),'#287eb9'),line(val('J'),'#eda33b')],5);plot('serviceChart',[line(val('N'),'#287eb9'),line(val('P'),'#e1a331'),line(val('T'),'#209c77')],100);plot('creativeChart',[line(val('V'),'#287eb9'),line(val('W'),'#e1a331')],30);plot('warehouseChart',[line(val('WA'),'#66717e'),line(val('WB'),'#e1a331')],0)}
+// Animate the actual Canvas line segments, rather than just revealing a static chart.
+// Line charts draw only after they enter the visible viewport (not when their tab loads).
+const gm2rLineFrames=new Map();
+const gm2rLineScenes=new Map();
+const gm2rLineCompleted=new Set();
+const gm2rLineStarted=new Set();
+const gm2rMotionOff=()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const gm2rDrawDuration=3300; // Calm, easy-to-follow animation (~3.3 seconds).
+const gm2rLineObserver=typeof IntersectionObserver==='function'
+ ?new IntersectionObserver(entries=>{
+    for(const entry of entries){
+     if(!entry.isIntersecting||$('kpiPage').hidden)continue;
+     const canvas=entry.target.querySelector('canvas[id]');
+     if(!canvas)continue;
+     if(!gm2rLineStarted.has(canvas.id))gm2rStartLine(canvas.id);
+     gm2rLineObserver.unobserve(entry.target);
+    }
+  },{threshold:0.25,rootMargin:'0px 0px -5% 0px'})
+ :null;
+function gm2rAnimateFrame(canvasId,time){
+ const scene=gm2rLineScenes.get(canvasId);
+ if(!scene)return;
+ const t=Math.min(1,(time-scene.startTime)/gm2rDrawDuration);
+ // Ease gently, keeping the drawing noticeably progressive from left to right.
+ const eased=t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+ scene.draw(eased);
+ if(t<1)gm2rLineFrames.set(canvasId,requestAnimationFrame(next=>gm2rAnimateFrame(canvasId,next)));
+ else {gm2rLineFrames.delete(canvasId);gm2rLineCompleted.add(canvasId);}
+}
+function gm2rStartLine(canvasId){
+ const scene=gm2rLineScenes.get(canvasId);
+ if(!scene||gm2rLineStarted.has(canvasId))return;
+ gm2rLineStarted.add(canvasId);
+ if(gm2rMotionOff()){scene.draw(1);gm2rLineCompleted.add(canvasId);return;}
+ scene.startTime=performance.now();
+ scene.draw(0);
+ gm2rLineFrames.set(canvasId,requestAnimationFrame(time=>gm2rAnimateFrame(canvasId,time)));
+}
+function gm2rObserveCharts(){
+ document.querySelectorAll('#kpiPage .chartcard').forEach(card=>{
+  const c=card.querySelector('canvas[id]');
+  if(!c||gm2rLineStarted.has(c.id))return;
+  if(gm2rMotionOff()){gm2rStartLine(c.id);return;}
+  if(gm2rLineObserver)gm2rLineObserver.observe(card);
+  else {
+   // Older browsers: require the chart to actually be on-screen before starting.
+   const bounds=card.getBoundingClientRect();
+   if(bounds.top<innerHeight*.92&&bounds.bottom>innerHeight*.08)gm2rStartLine(c.id);
+  }
+ });
+}
+function gm2rResetChartAnimations(){
+ for(const frame of gm2rLineFrames.values())cancelAnimationFrame(frame);
+ gm2rLineFrames.clear();
+ gm2rLineCompleted.clear();
+ gm2rLineStarted.clear();
+ for(const [id,scene] of gm2rLineScenes)scene.draw(0);
+ if(gm2rLineObserver)document.querySelectorAll('#kpiPage .chartcard').forEach(card=>gm2rLineObserver.observe(card));
+ requestAnimationFrame(gm2rObserveCharts);
+}
+function plot(canvasId,series,yMax0){
+ const c=$(canvasId);if(!c)return;
+ const previous=gm2rLineFrames.get(canvasId);
+ if(previous)cancelAnimationFrame(previous);
+ gm2rLineFrames.delete(canvasId);
+ const width=c.clientWidth||280,height=c.clientHeight||170,scale=window.devicePixelRatio||1;
+ c.width=Math.round(width*scale);c.height=Math.round(height*scale);
+ const ctx=c.getContext('2d');ctx.setTransform(scale,0,0,scale,0,0);
+ const left=34,right=8,top=10,bottom=24,W=width-left-right,H=height-top-bottom;
+ const values=series.flatMap(x=>x.values.filter(Number.isFinite));
+ let max=Math.max(yMax0||0,...values,1);max*=1.1;
+ const count=daysIn(month);
+ function draw(progress){
+  ctx.clearRect(0,0,width,height);
+  ctx.font='10px system-ui';ctx.textAlign='right';ctx.fillStyle='#889aad';
+  for(let i=0;i<=4;i++){
+   const y=top+H*(1-i/4);ctx.strokeStyle='#e7edf3';ctx.lineWidth=1;
+   ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(left+W,y);ctx.stroke();
+   ctx.fillText(max*i/4>=100?Math.round(max*i/4):Number((max*i/4).toFixed(1)),left-5,y+3);
+  }
+  ctx.textAlign='center';
+  for(const x of [1,Math.ceil(count/4),Math.ceil(count/2),Math.ceil(count*3/4),count]){
+   ctx.fillText(x,left+(x-1)*W/(count-1||1),height-6);
+  }
+  const last=(count-1)*progress;
+  for(const entry of series){
+   ctx.beginPath();ctx.lineWidth=entry.dash?1.5:2;ctx.strokeStyle=entry.color;
+   ctx.setLineDash(entry.dash?[5,4]:[]);
+   let drawing=false;
+   for(let i=0;i<entry.values.length;i++){
+    if(i>last)break;
+    const val=entry.values[i];
+    if(!Number.isFinite(val)){drawing=false;continue;}
+    const x=left+i*W/(count-1||1),y=top+H*(1-val/max);
+    if(drawing)ctx.lineTo(x,y);else ctx.moveTo(x,y);
+    drawing=true;
+    if(i+1<entry.values.length&&i<last&&i+1>last&&Number.isFinite(entry.values[i+1])){
+     const next=entry.values[i+1],portion=last-i;
+     ctx.lineTo(left+last*W/(count-1||1),top+H*(1-(val+(next-val)*portion)/max));
+    }
+   }
+   ctx.stroke();ctx.setLineDash([]);
+  }
+ }
+ gm2rLineScenes.set(canvasId,{draw,startTime:0});
+ // Do not animate just because data rendered or the user switched tabs.
+ if(gm2rMotionOff()){gm2rLineStarted.add(canvasId);gm2rLineCompleted.add(canvasId);draw(1);}
+ else if(gm2rLineCompleted.has(canvasId)){draw(1);}
+ else if(gm2rLineStarted.has(canvasId)){draw(1);gm2rLineCompleted.add(canvasId);}
+ else draw(0);
+}
+window.gm2rReplayCharts=function(){if(!$('kpiPage').hidden){renderCharts();gm2rObserveCharts();}};
+function renderCharts(){const all=dates(),val=k=>all.map(d=>num(getR(d),k)),line=(values,color,dash=false)=>({values,color,dash});plot('ordersChart',[line(val('B'),'#287eb9'),line(val('G'),'#eda33b'),line(all.map(()=>Number(settings.goalOrders)),'#a0afc0',true)],settings.goalOrders);plot('roasChart',[line(val('E'),'#287eb9'),line(val('J'),'#eda33b')],5);plot('serviceChart',[line(val('N'),'#287eb9'),line(val('P'),'#e1a331'),line(val('T'),'#209c77')],100);plot('creativeChart',[line(val('V'),'#287eb9'),line(val('W'),'#e1a331')],30);plot('warehouseChart',[line(val('WA'),'#66717e'),line(val('WB'),'#e1a331')],0);gm2rObserveCharts()}
 function refresh(){renderRows();renderKpis();renderOverall();renderCharts()}
-function openMonth(){month=$('month').value;if(!/^\d{4}-\d{2}$/.test(month))return;monthData=db.months[month]??{};settings={...DEFAULT,...(db.settings[month]??{})};$('tableTitle').textContent=new Date(month+'-01T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'})+' · Daily Operations';renderSettings();refresh()}
+function openMonth(){month=$('month').value;gm2rResetChartAnimations();if(!/^\d{4}-\d{2}$/.test(month))return;monthData=db.months[month]??{};settings={...DEFAULT,...(db.settings[month]??{})};$('tableTitle').textContent=new Date(month+'-01T12:00:00').toLocaleDateString('en-US',{month:'long',year:'numeric'})+' · Daily Operations';renderSettings();refresh()}
 $('month').addEventListener('change',openMonth);$('filter').addEventListener('change',renderRows);$('search').addEventListener('input',renderRows);
 $('settings').addEventListener('change',e=>{let k=e.target.dataset.setting;if(!k)return;let v=Number(e.target.value);if(!Number.isFinite(v)||v<0){e.target.value=settings[k];return}settings[k]=v;save();refresh()});
 $('body').addEventListener('input',e=>{
@@ -879,7 +1062,9 @@ window.gm2rGetMonthlyKpiReport=function(requested){
   return {month:requested,rows,monthly:monthlyOverall(),stats:summary(),settings:{...settings}};
  }finally{month=oldMonth;monthData=oldData;settings=oldSettings}
 };
-let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(renderCharts,150)});makeHead();openMonth();
+let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>{renderCharts();gm2rObserveCharts()},150)});
+if(!gm2rLineObserver)window.addEventListener('scroll',gm2rObserveCharts,{passive:true});
+makeHead();openMonth();
 })();
 </script>
 <script>
