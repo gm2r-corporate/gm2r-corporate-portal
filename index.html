@@ -447,6 +447,9 @@ body.gm2r-locked .cc-editor,body.gm2r-locked .cc-controls{display:none!important
 #gm2rCloudMigration{border:1px solid #e9c67c;background:#fff8e7;padding:15px;border-radius:12px;max-width:1050px;margin:18px auto;text-align:center}
 #gm2rCloudMigration p{line-height:1.6;margin:8px auto}
 /* Viewer pages are always displayed, even before Firebase is connected. */
+/* KPI TRACKER: navigation and content are shown only in an authorized, unlocked editor session. */
+body:not(.gm2r-editor-active) [data-main-tab="kpi"],
+body:not(.gm2r-editor-active) #kpiPage { display:none!important; }
 /* Administrator controls: visible ONLY during an authenticated, unlocked editor session.
    Header actions stay visible across ALL tabs for authenticated, unlocked editors. */
 .top .actions[hidden], #recoveryOpen[hidden] { display:none !important; }
@@ -531,14 +534,14 @@ body.gm2r-locked #attendancePage .att-subnav{grid-template-columns:minmax(0,300p
 
 <nav class="mainnav" aria-label="Website sections">
  <button type="button" class="mainnav-btn active" data-main-tab="home">🏠 HOME</button>
- <button type="button" class="mainnav-btn" data-main-tab="kpi">📊 KEY PERFORMANCE INDICATOR</button>
+ <button type="button" class="mainnav-btn" data-main-tab="kpi" hidden>📊 KEY PERFORMANCE INDICATOR</button>
  <button type="button" class="mainnav-btn" data-main-tab="applications">📅 EMPLOYEE LEAVE APPLICATION</button>
  <button type="button" class="mainnav-btn" data-main-tab="attendance">🏆 GM2R ATTENDANCE LEADERBOARD</button>
  <button type="button" class="mainnav-btn" data-main-tab="companychart">🏢 GM2R COMPANY CHART</button>
  <button type="button" class="mainnav-btn" id="recoveryOpen" hidden title="Back up or restore all GM2R records">💾 BACKUP & RECOVERY</button>
  <button type="button" class="mainnav-btn editor-access" id="editorAccessBtn" aria-label="Unlock editing with password">🔒 UNLOCK EDITING</button>
 </nav>
-<div id="editorStateInfo" class="gm2r-edit-note" role="status">🔒 Viewer mode · All dashboards and calendars are available to view.</div>
+<div id="editorStateInfo" class="gm2r-edit-note" role="status">🔒 Viewer mode · KPI Tracker is restricted to authorized editors.</div>
 
 <section id="homePage" class="site-page"><main class="home-wrap">
  <div class="home-hero">
@@ -546,7 +549,7 @@ body.gm2r-locked #attendancePage .att-subnav{grid-template-columns:minmax(0,300p
   <h2>GM2R DIGITAL SOLUTION CORPORATION</h2>
   <div class="home-proposed">PROPOSED MISSION, VISION & CORE VALUES · EDITABLE</div>
   <p id="homeTagline" class="home-tagline"></p>
-  <div class="home-hero-buttons"><button type="button" class="home-cta" id="homeEditToggle">✎ Edit Company Profile</button><button type="button" class="home-cta secondary" data-main-tab="kpi">View KPI Tracker</button><button type="button" class="home-cta secondary" data-main-tab="applications">Employee Applications</button></div>
+  <div class="home-hero-buttons"><button type="button" class="home-cta" id="homeEditToggle">✎ Edit Company Profile</button><button type="button" class="home-cta secondary" data-main-tab="kpi" hidden>View KPI Tracker</button><button type="button" class="home-cta secondary" data-main-tab="applications">Employee Applications</button></div>
  </div>
  <div class="home-section-hd"><div><h3>Explore GM2R Command Center</h3><p>Select a tab to access its tools and records.</p></div></div>
  <div class="home-section-hd"><div><h3>Our Mission & Vision</h3><p>Current proposed statements, customizable by authorized administrators.</p></div></div>
@@ -614,7 +617,7 @@ body.gm2r-locked #attendancePage .att-subnav{grid-template-columns:minmax(0,300p
   <div class="calendar-grid" id="leaveCalendar"></div>
  </div>
  <div class="records-panel" id="recordsPanel"><div class="records-top"><div><h3 id="recordsTitle">Leave Application Records</h3><p>Review, edit, or delete saved applications. Approval changes are checked against leave limits.</p></div><div class="records-actions"><select id="recordFilter" aria-label="Filter status"><option value="all">All statuses</option><option value="Pending">Pending</option><option value="Approved">Approved</option><option value="Rejected">Rejected</option></select><button type="button" class="btn" id="exportApps">↧ Export Applications CSV</button><button type="button" class="btn" id="backupApps">↧ Backup Applications JSON</button><button type="button" class="btn" id="restoreApps" style="display:none">↥ Restore Applications JSON</button><input type="file" id="appFileImport" accept=".json" hidden></div></div><div class="records-scroll"><table class="records-table"><thead><tr><th>Name</th><th>Department / Position</th><th>Application</th><th>Reason</th><th>File Date</th><th>Start</th><th>End</th><th>Approved By</th><th>Status</th><th>Actions</th></tr></thead><tbody id="recordsBody"></tbody></table></div></div>
- <div class="apps-disclaimer">Authorized administrators update shared Firestore records. Anyone with the link can view this portal; approved editor accounts can update company records. Approver fields are administrative records, not electronic signatures.</div>
+ <div class="apps-disclaimer">Authorized administrators update shared Firestore records. Public viewers can access the permitted sections; the KPI Tracker tab is visible only to approved unlocked editors. Approver fields are administrative records, not electronic signatures.</div>
  </main>
 </section>
 <div id="toast" class="toast" role="status"></div>
@@ -1115,7 +1118,8 @@ $('appDepartment').innerHTML='<option value="">Select department</option>'+DEPTS
 function safe(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function notify(msg){let t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(notify.tm);notify.tm=setTimeout(()=>t.classList.remove('show'),3100)}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(apps))}catch{alert('Browser saving is unavailable. Export a backup to protect your data.')}}
-function switchMain(to){if(!['home','kpi','applications','attendance','companychart'].includes(to))return;for(const btn of document.querySelectorAll('[data-main-tab]'))btn.classList.toggle('active',btn.dataset.mainTab===to);$('homePage').hidden=to!=='home';$('kpiPage').hidden=to!=='kpi';$('applicationsPage').hidden=to!=='applications';if($('attendancePage'))$('attendancePage').hidden=to!=='attendance';if($('companyChartPage'))$('companyChartPage').hidden=to!=='companychart';if(to==='companychart')window.gm2rRenderCompanyChart?.();if(to==='attendance')window.gm2rRenderAttendance?.();window.gm2rSyncAdminControls?.();if(to==='applications')renderApps();if(to==='kpi')window.dispatchEvent(new Event('resize'));window.scrollTo({top:0,behavior:'instant'});}
+function switchMain(to){if(!['home','kpi','applications','attendance','companychart'].includes(to))return;if(to==='kpi'&&!document.body.classList.contains('gm2r-editor-active'))return;for(const btn of document.querySelectorAll('[data-main-tab]'))btn.classList.toggle('active',btn.dataset.mainTab===to);$('homePage').hidden=to!=='home';$('kpiPage').hidden=to!=='kpi';$('applicationsPage').hidden=to!=='applications';if($('attendancePage'))$('attendancePage').hidden=to!=='attendance';if($('companyChartPage'))$('companyChartPage').hidden=to!=='companychart';if(to==='companychart')window.gm2rRenderCompanyChart?.();if(to==='attendance')window.gm2rRenderAttendance?.();window.gm2rSyncAdminControls?.();if(to==='applications')renderApps();if(to==='kpi')window.dispatchEvent(new Event('resize'));window.scrollTo({top:0,behavior:'instant'});}
+window.gm2rSwitchMain=switchMain;
 for(const btn of document.querySelectorAll('[data-main-tab]'))btn.onclick=()=>switchMain(btn.dataset.mainTab);
 function setSubtab(sub){current=sub;for(const btn of document.querySelectorAll('[data-subtab]'))btn.classList.toggle('active',btn.dataset.subtab===sub);let isForm=TITLES[sub]!==undefined;
  $('formPanel').hidden=!isForm;$('calendarPanel').hidden=sub!=='calendar';$('recordsPanel').hidden=!(sub==='records'||isForm);
@@ -1301,11 +1305,13 @@ show();
    const editor=authorized()&&unlocked;
    document.body.classList.toggle('gm2r-locked',!editor);
    document.body.classList.toggle('gm2r-editor-active',editor);
+   document.querySelectorAll('[data-main-tab="kpi"]').forEach(el=>{el.hidden=!editor;});
+   if(!editor&&document.getElementById('kpiPage')&&!document.getElementById('kpiPage').hidden){window.gm2rSwitchMain?.('home');}
    syncAdminControls();
    if(!editor){const recovery=document.getElementById('gm2rRecoveryOverlay');if(recovery)recovery.hidden=true;}
    btn.hidden=false;btn.style.display='';
    btn.textContent=editor?'🔓 LOCK EDITING':'🔒 UNLOCK EDITING';
-   state.textContent=editor?'🔓 Editor access enabled · Changes synchronize to Firebase.':authorized()?'🔒 Editing paused · Click UNLOCK EDITING.':'🔒 Viewer mode · KPI, calendar, attendance, and chart are available to read.';
+   state.textContent=editor?'🔓 Editor access enabled · Changes synchronize to Firebase.':authorized()?'🔒 Editing paused · Click UNLOCK EDITING.':'🔒 Viewer mode · KPI Tracker is restricted to authorized editors; calendar, attendance, and company chart remain available.';
    document.querySelectorAll('#tracker input[data-field],#settings input[data-setting],#homeProfileForm input,#homeProfileForm textarea,#requestForm input,#requestForm textarea').forEach(el=>{if(el.type!=='hidden')el.readOnly=!editor});
    const wanted=editor?'leave':'calendar',subtab=document.querySelector('[data-subtab="'+wanted+'"]');
    if(subtab&&!subtab.classList.contains('active'))subtab.click();
